@@ -3,9 +3,11 @@
    Every value here generates a utility. UI references the semantic tokens only;
    arbitrary values in markup are banned.
 
-   ▶ REPLACE the PLACEHOLDER PALETTE below with the project's brand.
-   Surfaces (the .theme-* scopes) live in surfaces.css; named animations in
-   animations.css.
+   ▶ This palette and the .theme-* surfaces (surfaces.css) are a DEMO baseline: on
+     kickoff, replace the values to match the real design system and delete any it
+     doesn't use — keep the structure, not the leftovers. The names are the system;
+     the values are placeholders, not decisions.
+   Named animations live in animations.css.
    ========================================================================== */
 @theme {
   /* — PLACEHOLDER brand palette — replace with the brand ————————————————
