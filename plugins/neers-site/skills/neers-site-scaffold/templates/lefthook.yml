@@ -35,4 +35,4 @@ pre-commit:
       # against each other, so a per-file view can't see the violation. It's still
       # milliseconds.
       glob: "src/**/*.{ts,tsx,css}"
-      run: bun scripts/check-source.ts
+      run: bun tests/check-source.ts

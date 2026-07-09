@@ -26,7 +26,7 @@ merely *usually* a mistake. Tighten or loosen as real projects teach you.
 
 ## `bun run check`
 
-`biome check` · `tsc --noEmit` · `scripts/check-source.ts`
+`biome check` · `tsc --noEmit` · `tests/check-source.ts`
 
 Instant, no browser, no build. If a rule *can* be checked from source, it belongs here.
 
@@ -77,6 +77,8 @@ tests. Almost all the runtime is `next build`.
 
 ```
 bun run fix        biome --write + tsc
-bun run ui:diff    what shadcn changed upstream vs our vendored components
-bun run freshen    bun update && bun audit — patches and minors, never a major
 ```
+
+`init.sh` runs `bun update && bun audit` once at kickoff, so patches and minors are
+already current — there's no `freshen` script. It also runs `shadcn-diff.sh`, which shows
+what shadcn changed upstream versus the frozen vendored components, to adopt by hand.

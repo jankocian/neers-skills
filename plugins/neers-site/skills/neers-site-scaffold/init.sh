@@ -25,7 +25,19 @@ mv gitignore .gitignore
 # Everything the project needs is declared in package.json.
 bun install
 
+# Pick up patches and minors within the caret ranges, once, at kickoff. `bun audit`
+# is advisory — never let a transient CVE abort the scaffold.
+bun update
+bun audit || true
+
 bunx playwright install --with-deps chromium
+
+# The vendored shadcn components are frozen at authoring time. Show what upstream changed
+# since, so the user can adopt improvements (new a11y attrs, fixes) by hand. Informational
+# only — never fail the scaffold on it.
+echo
+echo "Upstream shadcn changes since this scaffold was authored:"
+bash "$HERE/shadcn-diff.sh" || true
 
 echo
 echo "✓ scaffolded in $TARGET"

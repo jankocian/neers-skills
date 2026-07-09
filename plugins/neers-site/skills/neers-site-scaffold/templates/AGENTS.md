@@ -58,8 +58,8 @@ the element, and children need no colour utilities at all.
 
 Known mappings: tag → `badge`, chips/toggles → `toggle`/`toggle-group`,
 labels → `label`, selects → `select`, dialogs → `dialog`, carousels → `carousel`.
-Vendored files are ours —
-`bun run ui:diff` shows upstream shadcn changes but writes nothing; merge by hand.
+Vendored files are ours, frozen at authoring time — the scaffold's `shadcn-diff.sh`
+(run at init, re-runnable any time) shows what changed upstream; merge worthwhile hunks by hand.
 
 ## Overlays
 
@@ -137,8 +137,8 @@ bun run ci       builds the site      CI only. = check + test against a real bui
 Errors fail; warnings print and pass. An error is always a bug; a warning is usually a
 mistake but sometimes deliberate. Don't silence a warning — fix it, or leave it and say why.
 
-Not checks: `bun run fix` (biome --write), `bun run ui:diff` (upstream shadcn changes),
-`bun run freshen` (`bun update && bun audit`).
+Not a check: `bun run fix` (biome --write + tsc). Dependency freshening (`bun update &&
+bun audit`) runs once at scaffold time, not from a script.
 
 Do not run `bun run build` unless explicitly asked. `bun run test` reuses the running
 dev server; it does not need a build.

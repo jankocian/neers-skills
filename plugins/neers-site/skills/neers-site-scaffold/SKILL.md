@@ -74,12 +74,10 @@ gates on it, and `neers-site-feature` reads it before touching anything.
 `${CLAUDE_SKILL_DIR}` resolves to this skill's directory wherever the plugin is installed;
 `./my-site` is the new project directory, relative to your working directory. `init.sh`
 copies `templates/` (which **is** the project — same
-layout, nothing to rearrange), runs `bun install`, installs the git hooks and the
-Playwright browser. Deterministic: no CLI decides anything, so every site starts identical.
-
-Later, `bun run freshen` (`bun update && bun audit`) picks up patches and minors within
-the caret ranges. Majors are handled by updating this template, never by a surprise in
-someone's project.
+layout, nothing to rearrange), runs `bun install`, freshens within the caret ranges
+(`bun update && bun audit`), then installs the git hooks and the Playwright browser. No
+CLI decides anything, so the structure is identical every time; majors are picked up by
+updating this template, never by a surprise in someone's project.
 
 ## Phase 2 — Tokens
 
@@ -125,20 +123,15 @@ Everything ships already vendored: `button`, `badge`, `dialog`, `input`, `label`
 `textarea`, `toggle`, `toggle-group` from shadcn, plus `text` (typography), `surface`
 (colour context), `brandmark` and `lightbox`.
 
-**Vendored components are ours.** shadcn has no update command, by design. To see what
-upstream changed:
+**Vendored components are ours, and frozen at authoring time.** shadcn has no update
+command, so `init.sh` runs `shadcn-diff.sh` at scaffold time to show what upstream changed
+since — read that output and adopt the improvements worth having by hand. Re-run it any
+time from a site root: `bash <plugin>/shadcn-diff.sh [component]`. Keeping our edits small
+is what keeps that diff readable, so `button.tsx` uses shadcn's base string verbatim and
+changes only the variants.
 
-```bash
-bun run ui:diff            # every vendored component
-bun run ui:diff dialog     # one of them
-```
-
-It writes nothing. Merge the hunks worth having, by hand. Keeping our edits small is what
-keeps that diff readable — `button.tsx` uses shadcn's base string verbatim and changes
-only the variants.
-
-Need something else? `bunx shadcn@latest add <name>`, then add it to `/style-guide` and
-to `VENDORED` in `scripts/ui-diff.ts`.
+Need something else? `bunx shadcn@latest add <name>`, then add it to `/style-guide` and to
+the `VENDORED` list in `shadcn-diff.sh`.
 
 **The style guide IS the spec.** It composes the real `components/ui/*`.
 
