@@ -47,8 +47,8 @@ Per tile, with the findings in hand:
    the most common real finding.
 6. **Orphans and widows.** A heading whose last word wraps alone. `text-balance` on
    headings, `text-pretty` on body — both are already on the type variants.
-7. **Aspect ratio.** Stretched logo, squashed avatar. `img-aspect-mismatch` catches
-   >2%; your eye catches the rest.
+7. **Aspect ratio.** Stretched logo, squashed avatar — eyeball it; no deterministic
+   check covers this.
 8. **Empty regions.** A failed image, a component that rendered nothing, a stranded
    skeleton or spinner.
 9. **Placeholder content.** `Lorem ipsum`, `TODO`, `undefined`, `NaN`,
@@ -59,7 +59,7 @@ Per tile, with the findings in hand:
 11. **Mobile.** Is the nav usable? Are touch targets ≥24×24 (ideally 44×44)? Does the
     hero still read at 375px, or has `d1` eaten the screen?
 12. **Dark mode.** Any element still carrying a light-mode-only colour — a white box
-    on a dark ground, an invisible border. `invisible-text` catches the extreme case.
+    on a dark ground, an invisible border, text that vanishes into the surface.
 
 ## Escalate to Playwright MCP only for state
 

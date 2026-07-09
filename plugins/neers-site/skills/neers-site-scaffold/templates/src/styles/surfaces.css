@@ -74,7 +74,11 @@
   --muted-foreground: color-mix(in oklab, var(--color-paper) 72%, transparent);
   --accent: color-mix(in oklab, var(--color-paper) 8%, var(--color-ink));
   --accent-foreground: var(--color-paper);
-  --destructive: #f1736b;
+  --destructive: color-mix(
+    in oklab,
+    var(--color-danger) 70%,
+    var(--color-paper)
+  );
   --border: color-mix(in oklab, var(--color-paper) 12%, transparent);
   --input: color-mix(in oklab, var(--color-paper) 24%, transparent);
   --ring: var(--color-brand-soft);

@@ -104,7 +104,10 @@ test("robots.txt enforces the crawler policy", async ({ request }) => {
       rootDisallow,
     );
   }
-  for (const bot of ["Googlebot", "GPTBot", "PerplexityBot"]) {
+  // Only the search/citation bots that must never be blocked (doing so de-indexes
+  // the site). Whether to allow AI *training* bots (GPTBot etc.) is a per-site
+  // policy, not an invariant — so it is deliberately not asserted here.
+  for (const bot of ["Googlebot", "PerplexityBot"]) {
     expect(blockFor(bot), `${bot} must be present`).toBeTruthy();
     expect(
       rootDisallow.test(blockFor(bot) ?? ""),

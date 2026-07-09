@@ -2,8 +2,8 @@
 name: neers-site-review
 description: >-
   Catch visual, accessibility and SEO bugs on a neers marketing site before the
-  user sees them — deterministic layout audits at seven breakpoints (overflow,
-  collision, clipped text, invisible text, broken images), axe-core WCAG 2.2 AA,
+  user sees them — deterministic layout audits across breakpoints (horizontal
+  overflow, zero-size elements, broken images), axe-core WCAG 2.2 AA,
   SEO assertions over the served HTML, then a screenshot vision pass guided by the
   deterministic findings. Use when checking a page for visual bugs, reviewing an
   implementation before handing it back, verifying responsiveness, running the

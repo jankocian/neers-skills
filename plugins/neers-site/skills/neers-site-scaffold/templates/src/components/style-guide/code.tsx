@@ -2,8 +2,8 @@ import type { ComponentPropsWithoutRef } from "react";
 
 import { cn } from "~/lib/utils";
 
-/** Inline token / class name. PP Mori (font-sans) with tabular figures — the
- * brand allows no monospace, so "code" is conveyed by treatment, not face. */
+/** Inline token / class name. The brand face (font-sans) with tabular figures —
+ * no separate monospace, so "code" is conveyed by treatment, not face. */
 function Code({ className, ...props }: ComponentPropsWithoutRef<"code">) {
   return (
     <code
