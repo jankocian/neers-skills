@@ -184,9 +184,9 @@ if (css) {
     }
   }
 
-  // …and a hand-written `theme-typo` in JSX is the same silent nothing. This is what
-  // the deleted <Surface> component's variant union used to catch, and it catches more:
-  // a raw class string was never type-checked.
+  // …and a hand-written `theme-typo` in JSX is the same silent nothing: a raw class
+  // string is never type-checked, so guard it by matching every `theme-*` class in the
+  // source against the known surface set.
   const known = new Set(surfaces);
   for (const file of new Glob("src/**/*.{ts,tsx}").scanSync(".")) {
     const src = await Bun.file(file).text();

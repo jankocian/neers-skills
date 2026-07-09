@@ -1,0 +1,34 @@
+#!/bin/sh
+# Blocks commits that narrate the repo's PAST instead of its present state.
+#
+# Skill and agent docs must describe what the code IS — never what was removed,
+# renamed, or previously tried. A line that says "X, not a component" or "we used
+# to Y" is dead archaeology: it references things that no longer exist and only
+# adds noise for the next reader (human or agent).
+#
+# Deliberate exception: append  <!-- archaeology-ok -->  (or  // archaeology-ok )
+# on the same line. Extend PATTERN below as new tells show up.
+
+PATTERN='(used to|previously|formerly|originally|no longer|not relevant|anymore|in the past|back when|we (tried|rejected|switched|moved|renamed|replaced|removed|dropped)|renamed (from|to)|replaced (by|the|with)|deprecated in favou?r|the (deleted|removed|old) |old version|legacy |, not an? (component|prop|variant|wrapper|element|hook))'
+
+files=$(git diff --cached --name-only --diff-filter=ACM | grep -E '\.(md|mdx|tsx?|css)$' || true)
+[ -z "$files" ] && exit 0
+
+hits=0
+for f in $files; do
+  matches=$(git show ":$f" | grep -nEi "$PATTERN" | grep -v 'archaeology-ok' || true)
+  [ -z "$matches" ] && continue
+  echo "$matches" | while IFS= read -r m; do
+    echo "  $f:$m"
+  done
+  hits=1
+done
+
+if [ "$hits" -ne 0 ]; then
+  echo ""
+  echo "✗ archaeology detected — describe the present, not what changed."
+  echo "  rewrite the lines above affirmatively (drop the removed/renamed reference),"
+  echo "  or append '<!-- archaeology-ok -->' if the mention is deliberate."
+  exit 1
+fi
+exit 0

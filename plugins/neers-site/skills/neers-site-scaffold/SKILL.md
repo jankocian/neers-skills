@@ -105,10 +105,9 @@ because marketing pages need a hero size *and* a section-opener size. Everything
 that is *just a size* — body, small, caption — uses Tailwind's own `text-base` /
 `text-sm` / `text-xs`; a token that only renames a built-in earns nothing.
 
-**Size is a class, not a prop.** Each `--heading-*` / `--type-*` token bundles size +
-line-height + letter-spacing + weight, so `heading-d1` is the complete instruction.
-There is no `variant` prop — a lookup table whose answer is the class you were going
-to write anyway helps nobody, human or agent. A hero is
+**Size lives in the class name.** Each `--heading-*` / `--type-*` token bundles size +
+line-height + letter-spacing + weight, so `heading-d1` is the complete instruction —
+write it straight on the element, never via a lookup prop. A hero is
 `<Heading level={1} className="heading-d1">`. Never bump `level` to get a bigger size.
 
 > ⚠ **Never put the custom type scale in the `text-*` namespace.** tailwind-merge

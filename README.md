@@ -50,6 +50,22 @@ plugins/
 Each `plugin.json` deliberately carries **no `version`** — every commit counts as an update,
 so `/plugin marketplace update` always pulls the latest base.
 
+## No archaeology (pre-commit guard)
+
+Docs describe what the code **is** — never what was removed, renamed, or prior state. <!-- archaeology-ok -->
+A line like "colour is a class, *not a component*" (ghost of a deleted `Surface`) or a
+"we tried X" note is dead weight for the next reader. <!-- archaeology-ok -->
+
+`.githooks/pre-commit` blocks any commit whose staged `.md`/`.mdx`/`.ts`/`.tsx`/`.css`
+lines match the archaeology pattern, printing `file:line`. Rewrite them affirmatively, or
+append `<!-- archaeology-ok -->` on the line for a deliberate mention. Extend the pattern
+in the hook as new tells appear.
+
+**Fresh clone, once** (hooks path isn't set by clone):
+```
+git config core.hooksPath .githooks
+```
+
 ## Adding a new plugin later
 
 1. `mkdir -p plugins/<name>/.claude-plugin plugins/<name>/skills`
