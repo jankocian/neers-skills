@@ -120,8 +120,10 @@ write it straight on the element, never via a lookup prop. A hero is
 ## Phase 3 — Components
 
 Everything ships already vendored: `button`, `badge`, `dialog`, `input`, `label`,
-`textarea`, `toggle`, `toggle-group` from shadcn, plus `text` (typography), `surface`
-(colour context), `brandmark` and `lightbox`.
+`textarea`, `toggle`, `toggle-group` from shadcn, plus our own `Text`/`Heading`
+(typography), `Section`/`Container` (layout), `Lightbox` (media) and the motion primitives
+(`Reveal`, `Stagger`, `MaskReveal`). Colour context is the `.theme-*` classes, not a
+component.
 
 **Vendored components are ours, and frozen at authoring time.** shadcn has no update
 command, so `init.sh` runs `shadcn-diff.sh` at scaffold time to show what upstream changed
