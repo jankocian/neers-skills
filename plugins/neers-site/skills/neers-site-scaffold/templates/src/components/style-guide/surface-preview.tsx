@@ -1,5 +1,6 @@
 "use client";
 
+import { ArrowUpRight } from "lucide-react";
 import { useState } from "react";
 
 import { Badge } from "~/components/ui/badge";
@@ -63,7 +64,9 @@ function SurfacePreview() {
           is re-declared.
         </Text>
         <div className="mt-7 flex flex-wrap items-center gap-3">
-          <Button arrow>get started</Button>
+          <Button>
+            get started <ArrowUpRight />
+          </Button>
           <Button variant="outline">learn more</Button>
           {active ? <Badge variant="outline">{active.note}</Badge> : null}
         </div>

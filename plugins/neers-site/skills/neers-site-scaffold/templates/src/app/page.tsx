@@ -1,11 +1,10 @@
 import { ArrowUpRight } from "lucide-react";
 import type { Metadata } from "next";
-import Link from "next/link";
 
 import { Container } from "~/components/layout/container";
 import { Section } from "~/components/layout/section";
 import { Reveal } from "~/components/motion/reveal";
-import { buttonVariants } from "~/components/ui/button";
+import { Button } from "~/components/ui/button";
 import { Heading, Text } from "~/components/ui/text";
 import { pageMetadata } from "~/lib/site";
 
@@ -29,13 +28,10 @@ export default function Home() {
           </Reveal>
           {/* The style guide 404s in production; don't ship a link to a 404. */}
           {process.env.NODE_ENV !== "production" && (
-            <Link
-              href="/style-guide"
-              className={buttonVariants({ size: "lg" })}
-            >
+            <Button href="/style-guide" size="lg">
               view the style guide
-              <ArrowUpRight className="size-4 transition-transform duration-200 ease-out group-hover/button:translate-x-0.5 group-hover/button:-translate-y-0.5 motion-reduce:transform-none" />
-            </Link>
+              <ArrowUpRight />
+            </Button>
           )}
         </Container>
       </Section>

@@ -459,8 +459,7 @@ export default function StyleGuidePage() {
                 </div>
                 <Text className="max-w-measure text-muted-foreground text-sm">
                   hover, press and focus live on every button below — the press
-                  nudges 1px, focus shows a 2px brand ring, the arrow slides on
-                  hover.
+                  nudges 1px, focus shows a 2px brand ring.
                 </Text>
               </div>
             </SgSection>
@@ -510,15 +509,19 @@ export default function StyleGuidePage() {
                   </div>
                 </SgRow>
                 <SgRow
-                  label="with arrow"
-                  note="the up-right arrow nudges on hover — for forward, momentum-carrying actions."
+                  label="icons"
+                  note="icons are children — any Lucide icon. lead with one, trail with one, or size='icon' for icon-only (always give it an aria-label)."
                 >
                   <div className="flex flex-wrap items-center gap-3">
-                    <Button size="lg" arrow>
-                      get started
+                    <Button size="lg">
+                      <Mail /> email us
                     </Button>
-                    <Button variant="ghost" size="lg" arrow>
+                    <Button variant="ghost" size="lg">
                       learn more
+                      <ArrowUpRight />
+                    </Button>
+                    <Button size="icon" variant="outline" aria-label="search">
+                      <Search />
                     </Button>
                   </div>
                 </SgRow>
@@ -529,9 +532,7 @@ export default function StyleGuidePage() {
                   <div className="flex flex-wrap items-center gap-3">
                     <Button>default</Button>
                     <Button disabled>disabled</Button>
-                    <Button variant="outline" arrow>
-                      focusable
-                    </Button>
+                    <Button variant="outline">focusable</Button>
                   </div>
                 </SgRow>
               </div>

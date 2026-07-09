@@ -1,6 +1,6 @@
 import { Button as ButtonPrimitive } from "@base-ui/react/button";
 import { cva, type VariantProps } from "class-variance-authority";
-import { ArrowUpRight } from "lucide-react";
+import Link from "next/link";
 
 import { cn } from "~/lib/utils";
 
@@ -12,8 +12,16 @@ import { cn } from "~/lib/utils";
  * through the surface-aware tokens, so the same variant renders correctly on every
  * surface: `--primary` is remapped inside each `.theme-*` scope.
  *
- * Ours: the `inverse` variant, the `arrow` prop, and the hover colours (a real
- * colour step rather than an opacity fade).
+ * Ours: the `inverse` variant, the `href` prop (renders as a `next/link` anchor,
+ * so a link-that-looks-like-a-button stays one `<Button>`), and the hover colours
+ * (a real colour step rather than an opacity fade).
+ *
+ * Icons are children — the shadcn pattern, no prop. The base classes size any
+ * `<svg>` to 1rem and the size variants set the gap:
+ *   <Button><Mail /> Email</Button>                 icon + text
+ *   <Button>Continue <ArrowRight /></Button>        text + icon
+ *   <Button size="icon" aria-label="Close"><X /></Button>   icon only — name it
+ * Any icon (Lucide or otherwise) works; add a `size-*` class on the icon to resize.
  */
 const buttonVariants = cva(
   "group/button inline-flex shrink-0 select-none items-center justify-center whitespace-nowrap rounded-lg border border-transparent bg-clip-padding font-medium text-sm outline-none transition-all focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 active:not-aria-[haspopup]:translate-y-px disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 [&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:shrink-0",
@@ -46,32 +54,18 @@ const buttonVariants = cva(
 
 type ButtonProps = ButtonPrimitive.Props &
   VariantProps<typeof buttonVariants> & {
-    /** Append the up-right arrow that nudges on hover — for forward actions. */
-    arrow?: boolean;
+    /** When set, the button renders as a `next/link` anchor styled as a button. */
+    href?: string;
   };
 
-function Button({
-  className,
-  variant,
-  size,
-  arrow,
-  children,
-  ...props
-}: ButtonProps) {
+function Button({ className, variant, size, href, ...props }: ButtonProps) {
   return (
     <ButtonPrimitive
       data-slot="button"
       className={cn(buttonVariants({ variant, size, className }))}
+      {...(href ? { render: <Link href={href} /> } : {})}
       {...props}
-    >
-      {children}
-      {arrow ? (
-        <ArrowUpRight
-          aria-hidden
-          className="transition-transform duration-200 ease-out group-hover/button:translate-x-0.5 group-hover/button:-translate-y-0.5 motion-reduce:transform-none"
-        />
-      ) : null}
-    </ButtonPrimitive>
+    />
   );
 }
 
