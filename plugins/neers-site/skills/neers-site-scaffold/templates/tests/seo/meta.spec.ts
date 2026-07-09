@@ -87,12 +87,30 @@ test("sitemap covers every route and nothing else", async ({ request }) => {
   expect(extra, "sitemap.xml lists routes that do not exist").toEqual([]);
 });
 
-test("robots.txt disallows the style guide and points at the sitemap", async ({
-  request,
-}) => {
+test("robots.txt enforces the crawler policy", async ({ request }) => {
   const txt = await (await request.get("/robots.txt")).text();
   expect(txt).toContain("/style-guide");
   expect(txt).toContain(`${site.url}/sitemap.xml`);
+
+  // The point of robots.ts is the allow/block matrix. A refactor that drops a
+  // citation bot into the block group (or vice-versa) must fail here, not ship —
+  // the wrong policy silently de-indexes the site. Groups are blank-line separated.
+  const blockFor = (bot: string) =>
+    txt.split(/\n\s*\n/).find((b) => b.includes(bot));
+  const rootDisallow = /^Disallow:\s*\/\s*$/m;
+
+  for (const bot of ["CCBot", "Bytespider"]) {
+    expect(blockFor(bot), `${bot} must be blocked at root`).toMatch(
+      rootDisallow,
+    );
+  }
+  for (const bot of ["Googlebot", "GPTBot", "PerplexityBot"]) {
+    expect(blockFor(bot), `${bot} must be present`).toBeTruthy();
+    expect(
+      rootDisallow.test(blockFor(bot) ?? ""),
+      `${bot} must NOT be root-disallowed`,
+    ).toBe(false);
+  }
 });
 
 test("llms.txt has a title, a summary and real links", async ({ request }) => {

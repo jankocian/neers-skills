@@ -50,20 +50,19 @@ Four traps:
 
 ## OG images
 
-`app/opengraph-image.tsx` works **because we don't use `output: "export"`**. Under
-static export it's confirmed broken for dynamic routes
-([vercel/next.js#51147]) and unresolved for static ones (#55890) — you'd get a
-silently missing image, not a build error.
+One static bitmap for the whole site. Drop `src/app/opengraph-image.png` (or `.jpg`,
+~1200×630). Next serves it and auto-injects `og:image` **and** `twitter:image` on every
+route via the file-name convention — no metadata wiring. `bun run check` fails until it's
+present.
 
-- File-based metadata **overrides** the `metadata` object. With this file present,
-  `openGraph.images` in `layout.tsx` is ignored — delete it.
-- Satori cannot resolve `next/font`. `readFile` a static `.ttf`. A **variable**
-  woff2 will not work; Satori needs a static instance.
-- No Tailwind, no CSS custom properties inside `ImageResponse`. Literal values only.
-- Hard limits enforced at build: og ≤ 8 MB, twitter ≤ 5 MB.
-- `params` is a `Promise` since v16.
+- Per-route override: put an `opengraph-image.png` inside that route's folder.
+- Hard limits: og ≤ 8 MB, twitter ≤ 5 MB.
 
-Verify it actually emitted: `next build && find .next -name 'opengraph-image*'`.
+We do **not** generate OG images dynamically. Satori needs a static font instance and the
+per-project filename/weight coupling isn't worth it for a marketing site that wants a
+single share image. If you ever do need dynamic cards, add an `opengraph-image.tsx` — it
+works because we don't use `output: "export"` (static export breaks it:
+[vercel/next.js#51147], #55890).
 
 ## JSON-LD
 

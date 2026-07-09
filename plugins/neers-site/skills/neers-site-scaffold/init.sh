@@ -44,7 +44,7 @@ echo "✓ scaffolded in $TARGET"
 echo
 echo "  Still required before this builds:"
 echo "    src/app/fonts/Brand-Variable.woff2   the brand face"
-echo "    src/app/fonts/Brand-SemiBold.ttf     static instance, for OG images"
+echo "    src/app/opengraph-image.png          the social share image (~1200×630)"
 echo "    src/lib/site.ts                      url, name, description, routes"
 echo "    src/styles/globals.css               the brand palette"
 echo

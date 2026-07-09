@@ -20,7 +20,7 @@
  */
 import { Glob } from "bun";
 
-import { privateRoutes, routes } from "../src/lib/site";
+import { privateRoutes, routes, site } from "../src/lib/site";
 
 const errors: string[] = [];
 const warnings: string[] = [];
@@ -63,6 +63,31 @@ for (const [name, why] of Object.entries(PROTECTED)) {
         `    It is expected to look unused. Restore it, or ask the owner.`,
     );
   }
+}
+
+// ── 0b. Green check must not mean a broken site ──────────────────────────────
+
+// `site.url` feeds every canonical, OG url, sitemap entry and JSON-LD field, and
+// sails through biome/tsc unedited. An unedited deploy self-deindexes — fail loud.
+if (site.url.includes("example.com")) {
+  err(
+    `src/lib/site.ts: \`url\` is still the placeholder ${site.url}.\n` +
+      `    Every canonical, OG url, sitemap and JSON-LD derives from it — an\n` +
+      `    unedited deploy emits canonicals for a domain you don't own. Set the real URL.`,
+  );
+}
+
+// A social share image. Next auto-emits og:image + twitter:image from the
+// `opengraph-image` file convention; without one, every share renders a blank card.
+const hasOgImage =
+  [...new Glob("src/app/opengraph-image.{png,jpg,jpeg,gif}").scanSync(".")]
+    .length > 0;
+if (!hasOgImage) {
+  err(
+    "src/app/opengraph-image.(png|jpg): no social share image.\n" +
+      "    Drop a static bitmap there (~1200×630) — Next serves it as og:image and\n" +
+      "    twitter:image for the whole site.",
+  );
 }
 
 // ── 1. SEO wiring ────────────────────────────────────────────────────────────

@@ -49,6 +49,28 @@ export async function settle(page: import("@playwright/test").Page) {
   );
 
   await page.evaluate(() => document.fonts.ready);
+
+  // next/image is lazy by default: a below-the-fold image never fetches, so its
+  // `complete` stays false and the wait below would hang on any tall, image-heavy
+  // page. Step through the page to trigger every lazy load, then return to the top.
+  await page.evaluate(
+    () =>
+      new Promise<void>((resolve) => {
+        let y = 0;
+        const step = () => {
+          window.scrollTo(0, y);
+          y += window.innerHeight;
+          if (y < document.documentElement.scrollHeight) {
+            requestAnimationFrame(step);
+          } else {
+            window.scrollTo(0, 0);
+            resolve();
+          }
+        };
+        step();
+      }),
+  );
+
   await page.waitForFunction(() =>
     Array.from(document.images).every((i) => i.complete),
   );

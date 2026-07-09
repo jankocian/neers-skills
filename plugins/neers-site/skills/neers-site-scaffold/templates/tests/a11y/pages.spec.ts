@@ -95,7 +95,6 @@ for (const path of ROUTES) {
     await settle(page);
 
     const invisible: string[] = [];
-    const seen = new Set<string>();
 
     await page.locator("body").click({ position: { x: 1, y: 1 } });
 
@@ -107,18 +106,24 @@ for (const path of ROUTES) {
       const el = handle.asElement();
       if (!el) break;
 
-      const id = await el.evaluate(
-        (n) =>
-          `${n.tagName}#${n.id}.${(n as HTMLElement).className.slice(0, 40)}`,
-      );
+      // `id` is a label for reporting only, NOT an identity — many real elements
+      // share tag+class (a row of nav links), so keying wrap-detection on it
+      // aborted the walk at the first duplicate. Detect a genuine wrap by marking
+      // the node itself; stop only when we return to one already visited.
+      const { id, wrapped } = await el.evaluate((n) => {
+        const e = n as HTMLElement & { __focusSeen?: boolean };
+        const label = `${e.tagName}#${e.id}.${e.className.slice(0, 40)}`;
+        const seen = e.__focusSeen === true;
+        e.__focusSeen = true;
+        return { id: label, wrapped: seen };
+      });
       if (id.startsWith("BODY") || id.startsWith("HTML")) break;
 
       // The Next dev-tools overlay is a focusable custom element that ships no
       // focus ring and does not exist in a production build. Skip, don't fail.
       if (id.startsWith("NEXTJS-")) continue;
 
-      if (seen.has(id)) break; // tab order wrapped around
-      seen.add(id);
+      if (wrapped) break; // genuinely cycled back to an already-checked element
 
       const focused = await el.evaluate(focusStyle);
       await el.evaluate((n) => (n as HTMLElement).blur());
