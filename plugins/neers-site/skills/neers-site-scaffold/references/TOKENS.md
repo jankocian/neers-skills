@@ -1,0 +1,98 @@
+# Token architecture
+
+**The design system is `src/app/globals.css`.** Every value is declared there, once.
+This file holds only the rules CSS can't express.
+
+`lib/design-tokens.ts` is the human layer — names, roles, usage notes, grouping, order.
+**It carries no values.** The style guide reads them from the CSS variables at runtime
+(`useTokenValue`), so a swatch can never disagree with the stylesheet. `bun run check`
+fails if the catalogue names a variable `globals.css` never declares.
+
+## Three tiers
+
+1. **`@theme`** — primitives (`--color-*`, `--heading-*`, `--type-*`, `--radius-*`,
+   `--shadow-*`, `--ease-*`, `--container-*`). Generates the utilities.
+2. **`.theme-*` scopes** — each sets the complete shadcn token set
+   (`--background`, `--foreground`, `--primary`, `--border`, …).
+3. **`@theme inline`** — maps the shadcn tokens back to `--color-*`.
+
+## Rules
+
+**Colour inversion happens only in a `.theme-*` scope.** Never `.dark`, never
+per-element. Need a dark section? `className="theme-inverse"`.
+
+**`inline` on tier 3 is required.** Without it Tailwind bakes the value at build
+time and `bg-background` inside `.theme-inverse` renders the light colour.
+
+**A primitive may never be named after a shadcn semantic token.** Tier 3 re-points
+every one of them, so `--color-muted: var(--muted)` silently overwrites a primitive
+of that name and the colour it fed resolves wrong. Forbidden: `muted`, `accent`,
+`primary`, `secondary`, `card`, `popover`, `border`, `input`, `ring`, `destructive`,
+`background`, `foreground`. Use `--color-ink-muted` and friends.
+`bun run check` enforces this.
+
+**No arbitrary values in markup.** `w-[110vw]`, `text-[#fff]`, `md:p-[37px]`. The one
+exception is an inline `style` rendering a literal token value. `bun run check`
+enforces this.
+
+**`--font-brand` must match the `variable:` passed to `next/font/local`** in
+`app/layout.tsx`, or the site silently falls back to system-ui. Keep Inter, Roboto and
+Open Sans out of the fallback stack.
+
+## The `text-*` trap
+
+`tailwind-merge` (inside `cn()`) can't read the Tailwind theme. It resolves `text-*`
+with a validator: font-size is tried first but only accepts t-shirt sizes, and
+text-colour's validator returns true for anything. So a custom `text-lede` is
+classified as a colour, and a following `text-muted-foreground` deletes it.
+
+```
+cn("heading-d1", "text-muted-foreground")  →  both survive
+cn("text-lede",  "text-muted-foreground")  →  the size is gone
+```
+
+So the scale ships as `heading-*` and `type-*` `@utility` blocks. tailwind-merge has
+no conflict rule for those prefixes and leaves them alone; `cn()` stays a plain
+`twMerge(clsx())` with no config. Plain sizes — lede, body, small, caption — are just
+a size, so they use Tailwind's own `text-xl` / `text-base` / `text-sm` / `text-xs`.
+
+**Never add a level to the `text-*` namespace.**
+
+## Size is a class, never a prop
+
+Each `heading-*` / `type-*` utility bundles size, line-height, tracking and weight, so
+the class is the complete instruction. `Heading` picks the tag from `level` and adds
+`text-balance`; `Text` picks the tag from `as` and adds `text-pretty`. Neither has a
+`variant`.
+
+```tsx
+<Heading level={1} className="heading-d1">   // hero, and the page's only <h1>
+<Text className="text-xl text-muted-foreground">
+```
+
+**Never bump `level` to get a bigger size.** The tag carries meaning; the class carries
+size. One `<h1>` per page — `bun run test` enforces it.
+
+## Adding a surface
+
+Three places:
+
+1. A `.theme-<name>` block in `globals.css` setting **every** shadcn token.
+2. Its `--primary-hover` in the shared hover rule.
+3. `SURFACES` in `lib/design-tokens.ts`.
+
+There is no `Surface` component: a `.theme-*` class paints its own `background-color`
+and `color`, from `@layer base`, so it goes straight on the element. `background-color`
+does not inherit — children stay transparent and show it through — and any `bg-*`
+utility overrides it, because `utilities` is a later cascade layer than `base`.
+
+`bun run check` fails if a surface has no matching CSS block, and if a `theme-*` class
+in `src/` names no surface. Both would otherwise render nothing, silently.
+
+## Gotchas
+
+- `hover:bg-primary/90` is imperceptible. Hover uses `--primary-hover` /
+  `--secondary-hover`, a real colour step.
+- `var(--color-<brand>-x)` where the token doesn't exist resolves to empty. No error.
+- `@theme` edits don't reliably HMR under Turbopack. Restart the dev server.
+- No monospace: `code, kbd, samp, pre { font-family: inherit }`.

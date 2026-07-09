@@ -1,0 +1,151 @@
+import AxeBuilder from "@axe-core/playwright";
+import { expect, test } from "@playwright/test";
+
+import { ROUTES, settle } from "../routes";
+
+/**
+ * axe catches ~57% of real accessibility issues by volume (Deque's own study of
+ * 2,000+ audits). This gate is a FLOOR, not a pass. It cannot see focus order,
+ * meaningful alt text, or whether your copy makes sense.
+ *
+ * `wcag22aa` is not optional: `target-size` (WCAG 2.2 §2.5.8) is disabled unless
+ * you request that tag explicitly.
+ */
+const TAGS = ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"];
+
+/**
+ * Contrast lands in `incomplete`, not `violations`, whenever axe can't resolve a
+ * single flat background — text over a gradient or image — AND when the ratio is a
+ * flat 1:1 (white on white). Assert on violations alone and both go untested.
+ *
+ * The fix is a solid or rgba() scrim behind the text: axe then resolves a colour and
+ * genuinely tests it, and the text becomes readable, which was the point. Allowlist a
+ * selector here only with a comment saying why.
+ */
+const CONTRAST_MANUAL_REVIEW: string[] = [];
+
+for (const path of ROUTES) {
+  test(`a11y ${path}`, async ({ page }) => {
+    await page.goto(path);
+    await settle(page);
+
+    const { violations, incomplete } = await new AxeBuilder({ page })
+      .withTags(TAGS)
+      .analyze();
+
+    const summary = violations.map((v) => ({
+      id: v.id,
+      impact: v.impact,
+      help: v.help,
+      nodes: v.nodes.map((n) => n.target.join(" ")),
+    }));
+    expect(violations, JSON.stringify(summary, null, 2)).toEqual([]);
+
+    const unresolvedContrast = incomplete
+      .filter((i) => i.id === "color-contrast")
+      .flatMap((i) => i.nodes.map((n) => n.target.join(" ")))
+      .filter((t) => !CONTRAST_MANUAL_REVIEW.includes(t));
+
+    expect(
+      unresolvedContrast,
+      "axe could not verify this text's contrast — it sits over a gradient or " +
+        "image, or is 1:1 with its background. Add a scrim, or allowlist it in " +
+        "CONTRAST_MANUAL_REVIEW.",
+    ).toEqual([]);
+  });
+}
+
+/**
+ * Focus visibility (WCAG 2.4.7 / 2.4.11 / 2.4.13) has NO axe rule. Roll it.
+ *
+ * `element.focus()` does NOT match `:focus-visible` — the browser only applies it
+ * after a keyboard interaction. So we walk the real tab order with page.keyboard,
+ * which is a trusted event.
+ *
+ * We compare computed styles, not pixels: a focus ring is drawn OUTSIDE the border
+ * box (`outline-offset`, `ring`), so an element screenshot never contains it.
+ *
+ * This proves the element renders differently when focused, and that the difference
+ * is in a property a focus indicator lives in. It cannot prove the indicator has
+ * enough contrast — tab through the page yourself for that.
+ *
+ * Capped at 25 stops: enough for a marketing page's chrome and hero.
+ */
+const MAX_TAB_STOPS = 25;
+
+/** The properties a focus indicator can plausibly live in. */
+const focusStyle = (n: Element) => {
+  const s = getComputedStyle(n);
+  return {
+    outlineStyle: s.outlineStyle,
+    outlineWidth: s.outlineWidth,
+    outlineColor: s.outlineColor,
+    boxShadow: s.boxShadow,
+    borderColor: s.borderColor,
+    backgroundColor: s.backgroundColor,
+    color: s.color,
+  };
+};
+
+type FocusStyle = ReturnType<typeof focusStyle>;
+
+for (const path of ROUTES) {
+  test(`focus visible ${path}`, async ({ page }) => {
+    await page.goto(path);
+    await settle(page);
+
+    const invisible: string[] = [];
+    const seen = new Set<string>();
+
+    await page.locator("body").click({ position: { x: 1, y: 1 } });
+
+    for (let i = 0; i < MAX_TAB_STOPS; i++) {
+      await page.keyboard.press("Tab");
+
+      // Pin the node NOW. A `:focus` locator stops matching the moment we blur.
+      const handle = await page.evaluateHandle(() => document.activeElement);
+      const el = handle.asElement();
+      if (!el) break;
+
+      const id = await el.evaluate(
+        (n) =>
+          `${n.tagName}#${n.id}.${(n as HTMLElement).className.slice(0, 40)}`,
+      );
+      if (id.startsWith("BODY") || id.startsWith("HTML")) break;
+
+      // The Next dev-tools overlay is a focusable custom element that ships no
+      // focus ring and does not exist in a production build. Skip, don't fail.
+      if (id.startsWith("NEXTJS-")) continue;
+
+      if (seen.has(id)) break; // tab order wrapped around
+      seen.add(id);
+
+      const focused = await el.evaluate(focusStyle);
+      await el.evaluate((n) => (n as HTMLElement).blur());
+      const blurred = await el.evaluate(focusStyle);
+
+      // An outline with `style: none` renders nothing however wide or colourful it
+      // is — comparing outlineWidth/outlineColor alone passes elements that show
+      // no ring at all. And `boxShadow !== "none"` is worthless on its own: a
+      // `ring-*` utility leaves a transparent box-shadow even when unfocused.
+      const outlineDraws = (s: FocusStyle) =>
+        s.outlineStyle !== "none" && Number.parseFloat(s.outlineWidth) > 0;
+
+      const appeared =
+        (outlineDraws(focused) && !outlineDraws(blurred)) ||
+        focused.boxShadow !== blurred.boxShadow ||
+        focused.borderColor !== blurred.borderColor;
+
+      if (!appeared) invisible.push(id);
+
+      // Restore focus so the next Tab continues from this point in the order.
+      await el.evaluate((n) => (n as HTMLElement).focus());
+      await handle.dispose();
+    }
+
+    expect(
+      invisible,
+      "focusable elements with no visible focus indicator",
+    ).toEqual([]);
+  });
+}

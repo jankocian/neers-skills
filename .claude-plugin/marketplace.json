@@ -1,0 +1,11 @@
+{
+  "name": "neers-skills",
+  "owner": { "name": "Jan Kocian" },
+  "plugins": [
+    {
+      "name": "neers-site",
+      "source": "./plugins/neers-site",
+      "description": "Scaffold, build and review neers marketing sites (three skills: scaffold, feature, review)."
+    }
+  ]
+}

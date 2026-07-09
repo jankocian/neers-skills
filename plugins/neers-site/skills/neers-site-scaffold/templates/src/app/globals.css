@@ -1,0 +1,402 @@
+/* ============================================================================
+   Design tokens — brand-agnostic foundation.
+   ----------------------------------------------------------------------------
+   Conventions (deliberately NOT invented here):
+     • Tailwind v4 `@theme` namespaces — --color-*, --text-* (+ companions),
+       --radius-*, --shadow-*, --ease-*, --font-*. Generates the utilities.
+     • shadcn token vocabulary — --background, --foreground, --card, --popover,
+       --primary, --secondary, --muted, --accent, --destructive, --border,
+       --input, --ring, --radius — defined in :root, exposed via @theme inline.
+
+   Surfaces:
+     shadcn ships no convention beyond `.dark`, so we extend its OWN mechanism
+     ("override the same tokens inside a selector") to named `.theme-*` scopes.
+     A `.theme-*` class paints its own background and text, and remaps every token
+     beneath it, so children written with stock shadcn utilities — `text-muted-
+     foreground`, `border-border`, `bg-primary` — invert for free.
+
+   ▶ REPLACE the PLACEHOLDER PALETTE below with the project's brand. The names
+     are generic on purpose: UI never references raw values, only the semantic
+     tokens. Arbitrary values in markup are banned (tokens only).
+   ========================================================================== */
+
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+/* shadcn's own line: scopes the `dark:` variant to a `.dark` ancestor we never
+   add, so dark: utilities inside CLI-added shadcn components stay inert — our
+   .theme-* token overrides do the real work. Surfaces never use .dark. */
+@custom-variant dark (&:is(.dark *));
+
+/* ----------------------------------------------------------------------------
+   PRIMITIVES + static scales  (Tailwind v4 @theme — generates utilities)
+   -------------------------------------------------------------------------- */
+@theme {
+  /* — PLACEHOLDER brand palette — replace with the brand ————————————————
+     Neutrals tinted slightly warm; one accent. Never pure #000 / #fff. */
+  --color-brand: #4f46e5; /* the one action colour */
+  --color-brand-strong: #4338ca; /* hover / pressed — on light */
+  --color-brand-soft: #818cf8; /* brightened — on dark */
+
+  --color-paper: #fafaf9; /* default light ground */
+  --color-subtle: #f0efed; /* quieter light ground */
+  --color-ink: #1c1b1a; /* primary text / inverse ground */
+  --color-ink-raised: #2b2927; /* raised panel on dark */
+  /* NOT `--color-muted`: that name collides with shadcn's `muted` semantic
+     token, which `@theme inline` re-points at `--muted` further down this
+     file. The primitive would be silently overwritten and every
+     `text-muted-foreground` would render at ~1.05:1 contrast. */
+  --color-ink-muted: #57534e; /* secondary text (warm grey) */
+  --color-faint: #a8a29e; /* tertiary / disabled */
+
+  /* — accent hues · a pinch of spice (used sparingly for tags/marks) ———— */
+  --color-accent-blue: #3b82f6;
+  --color-accent-teal: #14b8a6;
+  --color-accent-amber: #f59e0b;
+  --color-accent-rose: #f43f5e;
+
+  --color-danger: #dc2626; /* the one functional red (errors) */
+
+  /* — type — the SEMANTIC styles: named bundles of size + line-height +
+     letter-spacing + weight. Pure sizes (body/small/caption) use Tailwind's
+     built-in `text-base` / `text-sm` / `text-xs` — those are "just a size" and
+     need no token here.
+
+     These are exposed as `heading-*` and `type-*` UTILITIES (see the @utility
+     blocks below), never `text-*`. That is deliberate: tailwind-merge treats any
+     `text-*` it doesn't recognise as a colour and silently drops the size when a
+     colour class follows. `heading-`/`type-` are unrecognised prefixes, so
+     tailwind-merge leaves them untouched — `cn()` stays a pristine
+     `twMerge(clsx())` with zero config.
+
+     Add / rename / remove levels freely (d1/d2, or h1..h6, or none) — the
+     @utility `*` matches whatever tokens exist. This IS the type scale; there is
+     no second list anywhere.
+
+     Steps at max width: 192 -> 128 -> 88 -> 56 -> 30 (1.50x 1.45x 1.57x 1.87x). */
+
+  /* headings & display -- rendered by `heading-<name>` */
+  --heading-d1: clamp(3.5rem, 10vw, 12rem);
+  --heading-d1--line-height: 0.85;
+  --heading-d1--letter-spacing: -0.03em;
+  --heading-d1--font-weight: 600;
+
+  --heading-d2: clamp(3rem, 7.5vw, 8rem);
+  --heading-d2--line-height: 0.9;
+  --heading-d2--letter-spacing: -0.03em;
+  --heading-d2--font-weight: 600;
+
+  --heading-h1: clamp(2.5rem, 6vw, 5.5rem);
+  --heading-h1--line-height: 1;
+  --heading-h1--letter-spacing: -0.025em;
+  --heading-h1--font-weight: 600;
+
+  --heading-h2: clamp(1.75rem, 4vw, 3.5rem);
+  --heading-h2--line-height: 1.05;
+  --heading-h2--letter-spacing: -0.02em;
+  --heading-h2--font-weight: 600;
+
+  --heading-h3: clamp(1.5rem, 2.4vw, 1.875rem);
+  --heading-h3--line-height: 1.15;
+  --heading-h3--letter-spacing: -0.015em;
+  --heading-h3--font-weight: 600;
+
+  /* text one-offs -- rendered by `type-<name>` */
+  --type-tagline: 0.8125rem; /* 13px -- the small kicker label above a heading */
+  --type-tagline--line-height: 1;
+  --type-tagline--letter-spacing: 0.06em;
+  --type-tagline--font-weight: 500;
+
+  /* — radii · mostly squared; pill only for chips ——————————————————————— */
+  --radius-xs: 2px;
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-xl: 12px;
+  --radius-2xl: 16px;
+
+  /* — elevation · restrained, long & low-opacity ———————————————————————— */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 6px 24px -8px rgba(0, 0, 0, 0.16);
+  --shadow-lg: 0 24px 60px -20px rgba(0, 0, 0, 0.26);
+
+  /* — motion · calm, no springs ——————————————————————————————————————— */
+  --ease-out: cubic-bezier(0.22, 0.61, 0.36, 1); /* entrances / exits */
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1); /* on-screen movement */
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1); /* sectional reveals */
+  --default-transition-timing-function: var(--ease-out);
+  --default-transition-duration: 220ms;
+
+  /* a reusable one-shot entrance — rise + fade. duration/easing/delay are
+     overridden inline where needed (e.g. the style-guide motion demo). */
+  --animate-rise: rise var(--default-transition-duration) var(--ease-out) both;
+
+  @keyframes rise {
+    from {
+      opacity: 0;
+      transform: translateY(1.5rem);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* — container widths · consumed by <Container size="…"> ———————————————
+     The horizontal gutter lives in container.tsx, in one place, on purpose. */
+  --container-narrow: 48rem; /* prose, a centred form */
+  --container-content: 64rem; /* the default section width */
+  --container-wide: 80rem; /* galleries, wide grids, the site header */
+
+  /* — measure · ch-based max-widths for readable line length ——————————— */
+  --container-measure: 62ch; /* body copy */
+  --container-measure-tight: 48ch; /* narrow asides */
+  --container-headline: 22ch; /* display & headings */
+
+  /* sticky-header height — feeds the header element AND scroll-padding-top below,
+     so in-page anchors / route changes clear the bar instead of landing under it */
+  --header-h: 4rem;
+
+  /* — type family — the brand font; `--font-brand` is set on <html> by
+     next/font/local in app/layout.tsx. The name MUST match `variable:` there.
+     No Inter / Roboto / Open Sans in the fallback stack: a fallback that is
+     itself a generic web font defeats the point, and those three are the
+     fingerprints of AI-generated work. Fall through to the system stack. */
+  --font-sans:
+    var(--font-brand), ui-sans-serif, system-ui, -apple-system, sans-serif;
+}
+
+/* ----------------------------------------------------------------------------
+   SURFACES — shadcn's token vocabulary, remapped per scope.
+   Default scope (:root / .theme-base) is the light page. Each other surface
+   re-points the SAME shadcn tokens, so any subtree just inverts. Borders are
+   derived from the ground colour via color-mix so they adapt to the brand.
+   Add or rename surfaces freely; keep the token set complete in each.
+   -------------------------------------------------------------------------- */
+:root,
+.theme-base {
+  --background: var(--color-paper);
+  --foreground: var(--color-ink);
+  --card: var(--color-paper);
+  --card-foreground: var(--color-ink);
+  --popover: var(--color-paper);
+  --popover-foreground: var(--color-ink);
+  --primary: var(--color-brand);
+  --primary-foreground: var(--color-paper);
+  --secondary: var(--color-subtle);
+  --secondary-foreground: var(--color-ink);
+  --muted: var(--color-subtle);
+  --muted-foreground: var(--color-ink-muted);
+  --accent: color-mix(in oklab, var(--color-ink) 6%, var(--color-paper));
+  --accent-foreground: var(--color-ink);
+  --destructive: var(--color-danger);
+  --border: color-mix(in oklab, var(--color-ink) 12%, transparent);
+  --input: color-mix(in oklab, var(--color-ink) 22%, transparent);
+  --ring: var(--color-brand);
+  --radius: 0.5rem;
+  color-scheme: light;
+}
+
+/* a slightly-off light surface — for raised hero / alternating sections */
+.theme-subtle {
+  --background: var(--color-subtle);
+  --foreground: var(--color-ink);
+  --card: var(--color-subtle);
+  --card-foreground: var(--color-ink);
+  --popover: var(--color-subtle);
+  --popover-foreground: var(--color-ink);
+  --primary: var(--color-brand);
+  --primary-foreground: var(--color-paper);
+  --secondary: var(--color-paper);
+  --secondary-foreground: var(--color-ink);
+  --muted: var(--color-paper);
+  --muted-foreground: var(--color-ink-muted);
+  --accent: color-mix(in oklab, var(--color-ink) 6%, var(--color-subtle));
+  --accent-foreground: var(--color-ink);
+  --destructive: var(--color-danger);
+  --border: color-mix(in oklab, var(--color-ink) 14%, transparent);
+  --input: color-mix(in oklab, var(--color-ink) 24%, transparent);
+  --ring: var(--color-brand);
+  color-scheme: light;
+}
+
+/* the inverse (dark) surface — the inversion showcase */
+.theme-inverse {
+  --background: var(--color-ink);
+  --foreground: var(--color-paper);
+  --card: var(--color-ink-raised);
+  --card-foreground: var(--color-paper);
+  --popover: var(--color-ink-raised);
+  --popover-foreground: var(--color-paper);
+  --primary: var(--color-brand);
+  --primary-foreground: var(--color-paper);
+  --secondary: var(--color-ink-raised);
+  --secondary-foreground: var(--color-paper);
+  --muted: var(--color-ink-raised);
+  --muted-foreground: color-mix(in oklab, var(--color-paper) 72%, transparent);
+  --accent: color-mix(in oklab, var(--color-paper) 8%, var(--color-ink));
+  --accent-foreground: var(--color-paper);
+  --destructive: #f1736b;
+  --border: color-mix(in oklab, var(--color-paper) 12%, transparent);
+  --input: color-mix(in oklab, var(--color-paper) 24%, transparent);
+  --ring: var(--color-brand-soft);
+  color-scheme: dark;
+}
+
+/* the accent field — a full-bleed brand-colour band (the action becomes paper) */
+.theme-brand {
+  --background: var(--color-brand);
+  --foreground: var(--color-paper);
+  --card: var(--color-brand-strong);
+  --card-foreground: var(--color-paper);
+  --popover: var(--color-brand-strong);
+  --popover-foreground: var(--color-paper);
+  --primary: var(--color-paper);
+  --primary-foreground: var(--color-brand);
+  --secondary: var(--color-brand-strong);
+  --secondary-foreground: var(--color-paper);
+  --muted: var(--color-brand-strong);
+  --muted-foreground: color-mix(in oklab, var(--color-paper) 84%, transparent);
+  --accent: color-mix(in oklab, var(--color-paper) 14%, var(--color-brand));
+  --accent-foreground: var(--color-paper);
+  --destructive: var(--color-paper);
+  --border: color-mix(in oklab, var(--color-paper) 34%, transparent);
+  --input: color-mix(in oklab, var(--color-paper) 55%, transparent);
+  --ring: var(--color-paper);
+  color-scheme: dark;
+}
+
+/* Hover colours — a clear step off the base (NOT a /90 opacity nudge, which is
+   imperceptible). Defined once per group after the surfaces. */
+:root,
+.theme-base,
+.theme-subtle,
+.theme-inverse {
+  --primary-hover: var(--color-brand-strong);
+}
+.theme-brand {
+  --primary-hover: var(--color-subtle);
+}
+:root,
+.theme-base,
+.theme-subtle,
+.theme-inverse,
+.theme-brand {
+  --secondary-hover: color-mix(
+    in oklab,
+    var(--secondary),
+    var(--foreground) 16%
+  );
+}
+
+/* ----------------------------------------------------------------------------
+   @theme inline — shadcn's exact mapping. `inline` makes utilities reference
+   the runtime var so they follow the .theme-* swaps above.
+   -------------------------------------------------------------------------- */
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary-hover: var(--primary-hover);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary-hover: var(--secondary-hover);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+}
+
+/* The type scale, as utilities. `heading-<name>` and `type-<name>` read the
+   `--heading-*` / `--type-*` tokens above, bundling size + line-height +
+   letter-spacing + weight. The `*` matches every token that exists, so the scale
+   is defined ONCE (in @theme) — add or remove a level there and the utility
+   follows. Missing companion tokens (e.g. a level with no letter-spacing) are
+   simply omitted.
+
+   Deliberately NOT on the `text-*` namespace: tailwind-merge treats unknown
+   `text-*` as a colour and would drop the size next to `text-muted-foreground`.
+   `heading-`/`type-` are unknown prefixes, so `cn()` needs zero config. */
+@utility heading-* {
+  font-size: --value(--heading-*);
+  line-height: --value(--heading-* --line-height);
+  letter-spacing: --value(--heading-* --letter-spacing);
+  font-weight: --value(--heading-* --font-weight);
+}
+
+@utility type-* {
+  font-size: --value(--type-*);
+  line-height: --value(--type-* --line-height);
+  letter-spacing: --value(--type-* --letter-spacing);
+  font-weight: --value(--type-* --font-weight);
+}
+
+/* Clip mask for per-line text reveals (see MaskReveal): the em padding (negated in
+   layout) keeps overflow:hidden from shearing glyph ascenders/descenders under a
+   tight display line-height while the line animates up from behind it. */
+@utility mask-line {
+  overflow: hidden;
+  padding-block: 0.15em;
+  margin-block: -0.15em;
+}
+
+/* ----------------------------------------------------------------------------
+   BASE LAYER — shadcn's base pattern, plus a few system touches.
+   -------------------------------------------------------------------------- */
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  /* A surface paints itself. `background-color` does not inherit, so only the element
+     carrying the class is painted — children stay transparent and show it through.
+     In `base`, so any `bg-*` utility still wins. */
+  .theme-base,
+  .theme-subtle,
+  .theme-inverse,
+  .theme-brand {
+    background-color: var(--background);
+    color: var(--foreground);
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-rendering: optimizeLegibility;
+    scroll-padding-top: var(--header-h);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    html {
+      scroll-behavior: smooth;
+    }
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+    font-size: 1rem;
+    line-height: 1.6;
+    font-feature-settings: "kern", "liga", "calt";
+  }
+
+  /* brand-tinted selection rather than OS blue */
+  ::selection {
+    background-color: color-mix(in oklab, var(--color-brand) 22%, transparent);
+    color: var(--foreground);
+  }
+
+  /* one focus treatment everywhere: a 2px brand ring, always visible */
+  :focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+  }
+}

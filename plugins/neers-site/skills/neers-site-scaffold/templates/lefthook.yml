@@ -1,0 +1,38 @@
+# Pre-commit guard. Source-level only — no build, no browser, so it stays fast.
+# Installed by the package.json "prepare" script; run `bunx lefthook install`
+# manually if the hooks ever go missing.
+#
+# Bypass with `git commit --no-verify`. The same checks run in `bun run check`
+# and in CI, so a bypass defers the problem rather than hiding it.
+pre-commit:
+  parallel: true
+  commands:
+    biome:
+      glob: "*.{js,ts,cjs,mjs,jsx,tsx,json,jsonc,css}"
+      # --write applies safe fixes only (no behaviour-changing --unsafe).
+      # `useSortedClasses` is configured with `fix: "safe"` in biome.json, so
+      # class sorting lands here. stage_fixed re-stages whatever Biome rewrote.
+      run: bunx biome check --write --no-errors-on-unmatched --files-ignore-unknown=true --colors=off --reporter=concise {staged_files}
+      stage_fixed: true
+
+    typecheck:
+      # Biome does NOT type-check. Its `types` domain enables type-AWARE LINT
+      # rules (noFloatingPromises, useAwaitThenable…); it has no assignability
+      # check and never will — Biome say so themselves. `const x: string = 42`
+      # is caught here and nowhere else in this hook.
+      #
+      # No {staged_files}: tsc needs the whole program, not a file list.
+      glob: "*.{ts,tsx}"
+      run: bunx tsc --noEmit
+
+    source:
+      # Three rules, all whole-project and all instant:
+      #   · every page exports `metadata`, and page <-> lib/site.ts agree both ways
+      #   · no --color-* primitive collides with a shadcn token (globals.css)
+      #   · no arbitrary Tailwind values for design decisions
+      #
+      # Whole-project rather than {staged_files}: two of the three compare files
+      # against each other, so a per-file view can't see the violation. It's still
+      # milliseconds.
+      glob: "src/**/*.{ts,tsx,css}"
+      run: bun scripts/check-source.ts

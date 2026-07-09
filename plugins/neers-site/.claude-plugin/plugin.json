@@ -1,0 +1,6 @@
+{
+  "name": "neers-site",
+  "description": "Neers marketing-site toolkit: scaffold a production-grade Next.js 16 landing site, build every page/section on-system, and gate it through visual, accessibility and SEO review.",
+  "author": { "name": "Jan Kocian" },
+  "keywords": ["nextjs", "marketing-site", "landing-page", "tailwind", "shadcn", "accessibility", "seo"]
+}
