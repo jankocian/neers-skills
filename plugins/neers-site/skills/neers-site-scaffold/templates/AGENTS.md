@@ -18,6 +18,9 @@ The thought _"I know this library"_ is the signal to check.
 - **Surfaces invert; tokens never repeat.** Colour inversion happens only in a
   `.theme-*` scope in `globals.css`. Never `.dark`, never per-element.
 - **`"use client"` at the leaf, never the page.**
+- **A custom focus ring must survive `outline-none`.** Tailwind v4's `outline-none`
+  zeroes `--tw-outline-style`, so `outline-2` alone renders nothing and fails WCAG 2.4.7
+  silently. Pair it with `focus-visible:outline-solid`, or prefer `focus-visible:ring-2`.
 
 ## Layout
 
@@ -27,7 +30,7 @@ vertical rhythm, `Container` owns the page gutter and the max width
 so override freely. Never re-apply `px-6` or `mx-auto max-w-*` further down the tree —
 that's how gutters drift apart.
 
-Colour is a class, not a component: `theme-base` | `theme-subtle` | `theme-inverse` |
+Colour is a theme class: `theme-base` | `theme-subtle` | `theme-inverse` |
 `theme-brand`. A theme class paints its own background and text, so it goes straight on
 the element, and children need no colour utilities at all.
 
@@ -54,11 +57,20 @@ the element, and children need no colour utilities at all.
    `src/components/ui/*` — never a bespoke preview of how they "would" look.
 
 Known mappings: tag → `badge`, chips/toggles → `toggle`/`toggle-group`,
-labels → `label`, selects → `select`, dialogs → `dialog`.
+labels → `label`, selects → `select`, dialogs → `dialog`, carousels → `carousel`.
+Vendored files are ours —
+`bun run ui:diff` shows upstream shadcn changes but writes nothing; merge by hand.
+
+## Overlays
+
+`Dialog` for anything with content or an action — Base UI brings the focus trap, ESC,
+scroll lock and ARIA. `Lightbox` (`src/components/ui/lightbox.tsx`) only for viewing
+media: it adds swipe, pinch-zoom, video and reduced-motion handling. A dialog is not a
+lightbox — don't build a gallery from one.
 
 ## Typography
 
-**Size is a class, not a prop.** `heading-d1`…`heading-h3`, `type-tagline`, and
+**Size lives in the class name.** `heading-d1`…`heading-h3`, `type-tagline`, and
 Tailwind's own `text-xl`/`text-base`/`text-sm`/`text-xs`. Never invent a `text-*`
 size — tailwind-merge would treat it as a colour and drop it.
 Each token bundles size + line-height + tracking + weight, so the class says
@@ -71,7 +83,8 @@ adds `text-pretty`. Neither has a `variant`.
 ```
 
 Never bump `level` to get a bigger size. The tag carries meaning; the class carries
-size.
+size. Token rationale (and why the scale avoids the `text-*` namespace):
+`neers-site-scaffold/references/TOKENS.md`.
 
 ## Motion
 
@@ -99,7 +112,7 @@ the correct behaviour: WCAG's concern is vestibular motion, not fades.
 
 The exception is continuous motion (parallax, marquee, autoplay), which
 `MotionConfig` cannot see. Then branch the `transition` or a MotionValue range —
-never the markup.
+never the markup. Full recipe: `neers-site-scaffold/references/MOTION.md`.
 
 ## SEO
 
@@ -108,7 +121,8 @@ route there. `sitemap.ts`, `robots.ts`, `llms.txt` and every page's `metadata`
 derive from it, and the SEO gate asserts coverage in both directions.
 
 `priority` on `next/image` is deprecated in Next 16 → `preload`. Prefer
-`loading="eager"` / `fetchPriority="high"`. Always set `sizes`.
+`loading="eager"` / `fetchPriority="high"`. Always set `sizes`. Metadata, JSON-LD and
+sitemap detail: `neers-site-scaffold/references/SEO.md`.
 
 ## The loop
 

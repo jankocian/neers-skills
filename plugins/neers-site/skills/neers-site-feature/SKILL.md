@@ -28,25 +28,15 @@ Do not hand back to the user until step 4 is green.
 
 ## 2. Build
 
-Full detail in **`references/BUILD-RULES.md`**. The short version:
+**The build rules are the project's `AGENTS.md` — the single source of truth. Read it
+there; don't rebuild it from memory.** It's the same contract `bun run check` enforces at
+commit time, so anything it states is a hard rule, not a preference.
 
-- **shadcn-first.** Check the registry (`shadcn` MCP `search_items_in_registries`,
-  or `bunx shadcn@latest add <name>`) before writing any component. Hand-writing a
-  replacement for something shadcn provides is **forbidden**. Customize the
-  generated file in place.
-- **Tokens, never arbitrary values.** No `text-[#fff]`, no `p-[37px]`.
-- **Motion comes from the primitives** — `Reveal`, `Stagger` + `StaggerItem`,
-  `MaskReveal`. No bespoke per-component easing. Custom Motion is allowed only for
-  a genuinely featured element, and then it triggers the animation pass in step 3.
-- **`"use client"` at the leaf, never the page.** Use `motion/react-client` when a
-  Server Component needs one `motion.div` and nothing else.
-- **`next/image` with an explicit `sizes`.** `priority` is deprecated in Next 16 →
-  `preload`; prefer `loading="eager"` / `fetchPriority="high"`.
-- **`next/link` for every internal href.**
-- **New page?** Register the route in `src/lib/site.ts` and
-  `export const metadata = pageMetadata("/route")`. `bun run check` fails otherwise.
+When a rule isn't enough, the depth lives in the scaffold references:
+`TOKENS.md` (type + colour tokens), `MOTION.md` (the primitives and `strict`),
+`SEO.md` (metadata, JSON-LD, sitemap), `CHECKS.md` (what the gate actually enforces).
 
-Run `bun run check` as you go. It's under 3 seconds.
+Run `bun run check` as you go — under 3 seconds.
 
 ## 3. Design passes — adaptive, not a judgment call
 
@@ -109,4 +99,5 @@ describe a red suite as done.
 
 ## References
 
-- `references/BUILD-RULES.md` — the non-negotiables, in full
+The build contract is the project's `AGENTS.md`. Depth lives in the scaffold skill's
+references: `TOKENS.md`, `MOTION.md`, `SEO.md`, `CHECKS.md`.
