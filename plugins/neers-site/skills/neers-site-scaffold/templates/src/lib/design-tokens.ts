@@ -1,13 +1,13 @@
 /**
  * The token catalogue — the human layer, and nothing else.
  *
- * There are no values here, on purpose. `src/app/globals.css` declares each value
+ * There are no values here, on purpose. The `src/styles` partials declare each value
  * exactly once, and the style guide reads them live from the CSS variable (see
  * `useTokenValue`). What lives here is what CSS cannot: names, roles, usage notes,
  * grouping, order.
  *
- * `bun run check` fails if a `varName` below is not declared in globals.css, or if a
- * surface below has no matching `.theme-*` block there.
+ * `bun run check` fails if a `varName` below is not declared in the `src/styles`
+ * partials, or if a surface below has no matching `.theme-*` block there.
  */
 export type ColorToken = { name: string; varName: string; note?: string };
 export type ColorGroup = {
@@ -108,7 +108,7 @@ export const SEMANTIC_TOKENS: SemanticToken[] = [
 ];
 
 /**
- * The surfaces. Adding one here plus a `.theme-*` block in globals.css is all it
+ * The surfaces. Adding one here plus a `.theme-*` block in surfaces.css is all it
  * takes — nothing to register, and `bun run check` fails if you do only one.
  */
 export const SURFACES = [
@@ -165,13 +165,6 @@ export const TYPE_SCALE: TypeSpec[] = [
     className: "heading-h3",
     usage: "card titles",
     sample: "components that compose",
-  },
-  {
-    name: "lede",
-    className: "text-xl",
-    usage: "intro paragraphs",
-    sample:
-      "a system of tokens, surfaces, and components that stays coherent as the product grows.",
   },
   {
     name: "body",

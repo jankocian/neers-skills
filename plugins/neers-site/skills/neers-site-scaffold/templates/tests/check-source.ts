@@ -11,7 +11,7 @@
  *   error    a page has no `metadata` export
  *   error    page <-> lib/site.ts disagree
  *   error    a `--color-*` primitive collides with a shadcn semantic token
- *   error    design-tokens.ts names a variable globals.css never declares
+ *   error    design-tokens.ts names a variable the src/styles partials never declare
  *   error    a surface has no matching `.theme-*` block
  *   warn     an arbitrary Tailwind value where a token should be
  *
@@ -27,8 +27,16 @@ const warnings: string[] = [];
 const err = (m: string) => errors.push(m);
 const warn = (m: string) => warnings.push(m);
 
-const CSS = "src/app/globals.css";
-const css = (await Bun.file(CSS).exists()) ? await Bun.file(CSS).text() : "";
+// The stylesheet is split into partials (globals.css imports theme/surfaces/
+// animations). Read them all as one — a token declared in any partial counts.
+const CSS = "src/styles/*.css"; // label for messages
+const css = (
+  await Promise.all(
+    [...new Glob("src/styles/**/*.css").scanSync(".")].map((f) =>
+      Bun.file(f).text(),
+    ),
+  )
+).join("\n");
 
 // ── 0. Protected dependencies ────────────────────────────────────────────────
 //
@@ -300,7 +308,7 @@ for (const file of scanned) {
   for (const m of src.matchAll(ARBITRARY)) {
     warn(
       `${file}: arbitrary Tailwind value \`${m[1]}-[${m[2]}]\`.\n` +
-        `    Prefer a token. If none fits, add one to @theme in globals.css.`,
+        `    Prefer a token. If none fits, add one to @theme in src/styles/theme.css.`,
     );
   }
 }

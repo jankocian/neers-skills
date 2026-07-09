@@ -35,7 +35,7 @@ type error.
 
 `check-source.ts` asserts four things: SEO wiring both ways; no `--color-*` primitive
 sharing a name with a shadcn semantic token; every `varName` in `design-tokens.ts`
-actually declared in `globals.css`; and no arbitrary Tailwind values (warning).
+actually declared in the `src/styles` partials; and no arbitrary Tailwind values (warning).
 
 It never rewrites your code. `git commit --no-verify` bypasses the hook; `bun run check`
 and CI still fail.

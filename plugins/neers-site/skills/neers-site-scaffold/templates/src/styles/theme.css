@@ -1,0 +1,143 @@
+/* ============================================================================
+   Design tokens — the brand-agnostic foundation (Tailwind v4 @theme).
+   Every value here generates a utility. UI references the semantic tokens only;
+   arbitrary values in markup are banned.
+
+   ▶ REPLACE the PLACEHOLDER PALETTE below with the project's brand.
+   Surfaces (the .theme-* scopes) live in surfaces.css; named animations in
+   animations.css.
+   ========================================================================== */
+@theme {
+  /* — PLACEHOLDER brand palette — replace with the brand ————————————————
+     Neutrals tinted slightly warm; one accent. Never pure #000 / #fff. */
+  --color-brand: #4f46e5; /* the one action colour */
+  --color-brand-strong: #4338ca; /* hover / pressed — on light */
+  --color-brand-soft: #818cf8; /* brightened — on dark */
+
+  --color-paper: #fafaf9; /* default light ground */
+  --color-subtle: #f0efed; /* quieter light ground */
+  --color-ink: #1c1b1a; /* primary text / inverse ground */
+  --color-ink-raised: #2b2927; /* raised panel on dark */
+  /* NOT `--color-muted`: that name collides with shadcn's `muted` semantic
+     token, which `@theme inline` re-points at `--muted` in surfaces.css. The
+     primitive would be silently overwritten and every `text-muted-foreground`
+     would render at ~1.05:1 contrast. */
+  --color-ink-muted: #57534e; /* secondary text (warm grey) */
+  --color-faint: #a8a29e; /* tertiary / disabled */
+
+  /* — accent hues · a pinch of spice (used sparingly for tags/marks) ———— */
+  --color-accent-blue: #3b82f6;
+  --color-accent-teal: #14b8a6;
+  --color-accent-amber: #f59e0b;
+  --color-accent-rose: #f43f5e;
+
+  --color-danger: #dc2626; /* the one functional red (errors) */
+
+  /* — type — semantic styles: named bundles of size + line-height +
+     letter-spacing. Weight is uniform (600) so it's set once, on the utility,
+     not repeated per level. Pure sizes (body/small/caption) use Tailwind's
+     built-in `text-base` / `text-sm` / `text-xs`.
+
+     Custom only where defaults can't reach: these use fluid `clamp()` sizing.
+     Exposed as `heading-*` / `type-*` utilities (below), never `text-*` —
+     tailwind-merge treats an unrecognised `text-*` as a colour and drops the
+     size next to a colour class; `heading-`/`type-` are left untouched, so
+     `cn()` stays a pristine `twMerge(clsx())`.
+
+     Add / rename / remove levels freely — the `@utility *` matches whatever
+     tokens exist. This IS the type scale; there is no second list anywhere.
+     Steps at max width: 192 -> 128 -> 88 -> 56 -> 30. */
+
+  /* headings & display -- rendered by `heading-<name>`, all weight 600 */
+  --heading-d1: clamp(3.5rem, 10vw, 12rem);
+  --heading-d1--line-height: 0.85;
+  --heading-d1--letter-spacing: -0.03em;
+
+  --heading-d2: clamp(3rem, 7.5vw, 8rem);
+  --heading-d2--line-height: 0.9;
+  --heading-d2--letter-spacing: -0.03em;
+
+  --heading-h1: clamp(2.5rem, 6vw, 5.5rem);
+  --heading-h1--line-height: 1;
+  --heading-h1--letter-spacing: -0.025em;
+
+  --heading-h2: clamp(1.75rem, 4vw, 3.5rem);
+  --heading-h2--line-height: 1.05;
+  --heading-h2--letter-spacing: -0.02em;
+
+  --heading-h3: clamp(1.5rem, 2.4vw, 1.875rem);
+  --heading-h3--line-height: 1.15;
+  --heading-h3--letter-spacing: -0.015em;
+
+  /* text one-offs -- rendered by `type-<name>`, weight per level (not 600) */
+  --type-tagline: 0.8125rem; /* 13px -- the small kicker label above a heading */
+  --type-tagline--line-height: 1;
+  --type-tagline--letter-spacing: 0.06em;
+  --type-tagline--font-weight: 500;
+
+  /* — radii · mostly squared; pill only for chips ——————————————————————— */
+  --radius-xs: 2px;
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-xl: 12px;
+  --radius-2xl: 16px;
+
+  /* — elevation · restrained, long & low-opacity ———————————————————————— */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 6px 24px -8px rgba(0, 0, 0, 0.16);
+  --shadow-lg: 0 24px 60px -20px rgba(0, 0, 0, 0.26);
+
+  /* — motion easing · calm, no springs. Mirrored in lib/motion.ts for JS. ——
+     Named keyframe animations (`--animate-*`) live in animations.css. */
+  --ease-out: cubic-bezier(0.22, 0.61, 0.36, 1); /* entrances / exits */
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1); /* on-screen movement */
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1); /* sectional reveals */
+  --default-transition-timing-function: var(--ease-out);
+  --default-transition-duration: 220ms;
+
+  /* — container widths · consumed by <Container size="…"> ———————————————
+     The horizontal gutter lives in container.tsx, in one place, on purpose. */
+  --container-narrow: 48rem; /* prose, a centred form */
+  --container-content: 64rem; /* the default section width */
+  --container-wide: 80rem; /* galleries, wide grids, the site header */
+
+  /* — measure · ch-based max-widths for readable line length ——————————— */
+  --container-measure: 62ch; /* body copy */
+  --container-measure-tight: 48ch; /* narrow asides */
+  --container-headline: 22ch; /* display & headings */
+
+  /* sticky-header height — feeds the header element AND scroll-padding-top in
+     globals.css, so anchors / route changes clear the bar instead of landing
+     under it */
+  --header-h: 4rem;
+
+  /* — type family — the brand font; `--font-brand` is set on <html> by
+     next/font/local in app/layout.tsx. The name MUST match `variable:` there.
+     No Inter / Roboto / Open Sans in the fallback stack: a fallback that is
+     itself a generic web font defeats the point, and those three are the
+     fingerprints of AI-generated work. Fall through to the system stack. */
+  --font-sans:
+    var(--font-brand), ui-sans-serif, system-ui, -apple-system, sans-serif;
+}
+
+/* The type scale as utilities. `heading-<name>` / `type-<name>` read the
+   `--heading-*` / `--type-*` tokens above. Weight is hoisted for headings (all
+   600); `type-*` keeps a per-level weight. The `*` matches every token that
+   exists, so the scale is defined ONCE (in @theme) — add or remove a level and
+   the utility follows. A missing companion (e.g. no letter-spacing) is omitted.
+
+   Deliberately NOT on `text-*`: see the note by the type tokens above. */
+@utility heading-* {
+  font-size: --value(--heading-*);
+  line-height: --value(--heading-* --line-height);
+  letter-spacing: --value(--heading-* --letter-spacing);
+  font-weight: 600;
+}
+
+@utility type-* {
+  font-size: --value(--type-*);
+  line-height: --value(--type-* --line-height);
+  letter-spacing: --value(--type-* --letter-spacing);
+  font-weight: --value(--type-* --font-weight);
+}

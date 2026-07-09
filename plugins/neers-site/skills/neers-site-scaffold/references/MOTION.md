@@ -119,7 +119,7 @@ Four house rules, and they are the whole cost of the freedom:
 
 1. **Easing comes from `lib/motion.ts`.** Never an inline `cubic-bezier` literal,
    never a new curve. If the vocabulary is genuinely missing something, add it
-   there and to `globals.css`, and say so.
+   there and to `theme.css`, and say so.
 2. **No `will-change`.** Motion doesn't manage it, so a utility class pins a
    compositor layer for the life of the page.
 3. **No DOM branching on `useReducedMotion`.** See below.
@@ -193,7 +193,7 @@ don't propagate. Every direct child must be a `<StaggerItem>`.
 
 **`src/lib/motion.ts` is the vocabulary** — `EASE_OUT` for entrances and exits,
 `EASE_IN_OUT` for things already on screen, `EASE_OUT_EXPO` for sectional reveals.
-`globals.css` holds the CSS twins under `--ease-*`. Motion can't read a custom property
+`theme.css` holds the CSS twins under `--ease-*`. Motion can't read a custom property
 per frame, so the literals live in both; change one, change the other.
 
 Never an inline `cubic-bezier`. `ease-in` almost never; `linear` only for marquees and

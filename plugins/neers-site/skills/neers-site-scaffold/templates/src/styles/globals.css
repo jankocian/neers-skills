@@ -1,0 +1,74 @@
+/* ============================================================================
+   Entry stylesheet. Imported once, in app/layout.tsx.
+
+   The foundation is split for legibility — edit the partials, not this file:
+     theme.css       design tokens (palette, type, radii, shadows, motion,
+                     containers, font) + the heading-* / type-* utilities
+     surfaces.css    the .theme-* scopes + shadcn @theme inline mapping
+     animations.css  keyframes + their --animate-* tokens + mask-line
+
+   This file keeps only what's cross-cutting: the library imports, the dark
+   custom-variant, and the base layer.
+   ========================================================================== */
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+@import "./theme.css";
+@import "./surfaces.css";
+@import "./animations.css";
+
+/* shadcn's own line: scopes the `dark:` variant to a `.dark` ancestor we never
+   add, so dark: utilities inside CLI-added shadcn components stay inert — our
+   .theme-* token overrides do the real work. Surfaces never use .dark. */
+@custom-variant dark (&:is(.dark *));
+
+/* ----------------------------------------------------------------------------
+   BASE LAYER — shadcn's base pattern, plus a few system touches.
+   -------------------------------------------------------------------------- */
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  /* A surface paints itself. `background-color` does not inherit, so only the element
+     carrying the class is painted — children stay transparent and show it through.
+     In `base`, so any `bg-*` utility still wins. */
+  .theme-base,
+  .theme-subtle,
+  .theme-inverse,
+  .theme-brand {
+    background-color: var(--background);
+    color: var(--foreground);
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-rendering: optimizeLegibility;
+    scroll-padding-top: var(--header-h);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    html {
+      scroll-behavior: smooth;
+    }
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+    font-size: 1rem;
+    line-height: 1.6;
+    font-feature-settings: "kern", "liga", "calt";
+  }
+
+  /* brand-tinted selection rather than OS blue */
+  ::selection {
+    background-color: color-mix(in oklab, var(--color-brand) 22%, transparent);
+    color: var(--foreground);
+  }
+
+  /* one focus treatment everywhere: a 2px brand ring, always visible */
+  :focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+  }
+}

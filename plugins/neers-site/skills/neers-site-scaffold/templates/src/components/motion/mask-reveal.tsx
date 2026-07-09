@@ -14,7 +14,7 @@ type MaskRevealProps = {
 } & Omit<ComponentProps<typeof m.span>, "children" | "className">;
 
 // One headline line rising from behind a clip mask, on mount (pair with the
-// `mask-line` utility in globals.css). Above-the-fold only — it has no viewport
+// `mask-line` utility in animations.css). Above-the-fold only — it has no viewport
 // trigger. Under reduced motion MotionConfig snaps the transform to its target,
 // so the line is simply in place — no per-component logic.
 //

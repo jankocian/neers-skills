@@ -19,7 +19,7 @@ type ContainerProps<T extends ElementType> = {
  * Centres content and owns the page gutter.
  *
  * The gutter is here and nowhere else: never re-apply `px-6` down the tree. Widths
- * come from `--container-*` in globals.css. `className` overrides anything.
+ * come from `--container-*` in theme.css. `className` overrides anything.
  */
 function Container<T extends ElementType = "div">(props: ContainerProps<T>) {
   const {

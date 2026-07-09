@@ -1,0 +1,153 @@
+/* ============================================================================
+   Surfaces — shadcn's token vocabulary, remapped per scope.
+   ----------------------------------------------------------------------------
+   shadcn ships no convention beyond `.dark`, so we extend its OWN mechanism
+   (override the same tokens inside a selector) to named `.theme-*` scopes.
+   The default scope (:root / .theme-base) is the light page; each other surface
+   re-points the SAME shadcn tokens, so any subtree just inverts. Borders derive
+   from the ground colour via color-mix so they follow the brand.
+
+   Add or rename surfaces freely; keep the token set complete in each. The
+   `.theme-*` class list is mirrored in design-tokens.ts (SURFACES) and painted
+   in globals.css's base layer.
+   ========================================================================== */
+:root,
+.theme-base {
+  --background: var(--color-paper);
+  --foreground: var(--color-ink);
+  --card: var(--color-paper);
+  --card-foreground: var(--color-ink);
+  --popover: var(--color-paper);
+  --popover-foreground: var(--color-ink);
+  --primary: var(--color-brand);
+  --primary-foreground: var(--color-paper);
+  --secondary: var(--color-subtle);
+  --secondary-foreground: var(--color-ink);
+  --muted: var(--color-subtle);
+  --muted-foreground: var(--color-ink-muted);
+  --accent: color-mix(in oklab, var(--color-ink) 6%, var(--color-paper));
+  --accent-foreground: var(--color-ink);
+  --destructive: var(--color-danger);
+  --border: color-mix(in oklab, var(--color-ink) 12%, transparent);
+  --input: color-mix(in oklab, var(--color-ink) 22%, transparent);
+  --ring: var(--color-brand);
+  --radius: 0.5rem;
+  color-scheme: light;
+}
+
+/* a slightly-off light surface — for raised hero / alternating sections */
+.theme-subtle {
+  --background: var(--color-subtle);
+  --foreground: var(--color-ink);
+  --card: var(--color-subtle);
+  --card-foreground: var(--color-ink);
+  --popover: var(--color-subtle);
+  --popover-foreground: var(--color-ink);
+  --primary: var(--color-brand);
+  --primary-foreground: var(--color-paper);
+  --secondary: var(--color-paper);
+  --secondary-foreground: var(--color-ink);
+  --muted: var(--color-paper);
+  --muted-foreground: var(--color-ink-muted);
+  --accent: color-mix(in oklab, var(--color-ink) 6%, var(--color-subtle));
+  --accent-foreground: var(--color-ink);
+  --destructive: var(--color-danger);
+  --border: color-mix(in oklab, var(--color-ink) 14%, transparent);
+  --input: color-mix(in oklab, var(--color-ink) 24%, transparent);
+  --ring: var(--color-brand);
+  color-scheme: light;
+}
+
+/* the inverse (dark) surface — the inversion showcase */
+.theme-inverse {
+  --background: var(--color-ink);
+  --foreground: var(--color-paper);
+  --card: var(--color-ink-raised);
+  --card-foreground: var(--color-paper);
+  --popover: var(--color-ink-raised);
+  --popover-foreground: var(--color-paper);
+  --primary: var(--color-brand);
+  --primary-foreground: var(--color-paper);
+  --secondary: var(--color-ink-raised);
+  --secondary-foreground: var(--color-paper);
+  --muted: var(--color-ink-raised);
+  --muted-foreground: color-mix(in oklab, var(--color-paper) 72%, transparent);
+  --accent: color-mix(in oklab, var(--color-paper) 8%, var(--color-ink));
+  --accent-foreground: var(--color-paper);
+  --destructive: #f1736b;
+  --border: color-mix(in oklab, var(--color-paper) 12%, transparent);
+  --input: color-mix(in oklab, var(--color-paper) 24%, transparent);
+  --ring: var(--color-brand-soft);
+  color-scheme: dark;
+}
+
+/* the accent field — a full-bleed brand-colour band (the action becomes paper) */
+.theme-brand {
+  --background: var(--color-brand);
+  --foreground: var(--color-paper);
+  --card: var(--color-brand-strong);
+  --card-foreground: var(--color-paper);
+  --popover: var(--color-brand-strong);
+  --popover-foreground: var(--color-paper);
+  --primary: var(--color-paper);
+  --primary-foreground: var(--color-brand);
+  --secondary: var(--color-brand-strong);
+  --secondary-foreground: var(--color-paper);
+  --muted: var(--color-brand-strong);
+  --muted-foreground: color-mix(in oklab, var(--color-paper) 84%, transparent);
+  --accent: color-mix(in oklab, var(--color-paper) 14%, var(--color-brand));
+  --accent-foreground: var(--color-paper);
+  --destructive: var(--color-paper);
+  --border: color-mix(in oklab, var(--color-paper) 34%, transparent);
+  --input: color-mix(in oklab, var(--color-paper) 55%, transparent);
+  --ring: var(--color-paper);
+  color-scheme: dark;
+}
+
+/* Hover colours — a clear step off the base (NOT a /90 opacity nudge, which is
+   imperceptible). Defined once per group after the surfaces. */
+:root,
+.theme-base,
+.theme-subtle,
+.theme-inverse {
+  --primary-hover: var(--color-brand-strong);
+}
+.theme-brand {
+  --primary-hover: var(--color-subtle);
+}
+:root,
+.theme-base,
+.theme-subtle,
+.theme-inverse,
+.theme-brand {
+  --secondary-hover: color-mix(
+    in oklab,
+    var(--secondary),
+    var(--foreground) 16%
+  );
+}
+
+/* @theme inline — shadcn's exact mapping. `inline` makes utilities reference the
+   runtime var, so they follow the .theme-* swaps above. */
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary-hover: var(--primary-hover);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary-hover: var(--secondary-hover);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+}

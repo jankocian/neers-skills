@@ -16,7 +16,7 @@ The thought _"I know this library"_ is the signal to check.
   sanctioned exception is an inline `style` rendering a literal token value.
 - **shadcn-first.** See below.
 - **Surfaces invert; tokens never repeat.** Colour inversion happens only in a
-  `.theme-*` scope in `globals.css`. Never `.dark`, never per-element.
+  `.theme-*` scope in `surfaces.css`. Never `.dark`, never per-element.
 - **`"use client"` at the leaf, never the page.**
 - **A custom focus ring must survive `outline-none`.** Tailwind v4's `outline-none`
   zeroes `--tw-outline-style`, so `outline-2` alone renders nothing and fails WCAG 2.4.7

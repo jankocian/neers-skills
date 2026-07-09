@@ -1,0 +1,31 @@
+/* ============================================================================
+   Named animations — keyframes + their `--animate-*` tokens, kept together so
+   Tailwind emits each keyframe alongside its utility. Add new ones here; this is
+   the one place page-level motion keyframes live. (Easing tokens are in
+   theme.css; the Motion primitives are in src/components/motion/.)
+   ========================================================================== */
+@theme {
+  /* a reusable one-shot entrance — rise + fade. duration/easing/delay are
+     overridden inline where needed (e.g. the style-guide motion demo). */
+  --animate-rise: rise var(--default-transition-duration) var(--ease-out) both;
+
+  @keyframes rise {
+    from {
+      opacity: 0;
+      transform: translateY(1.5rem);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}
+
+/* Clip mask for per-line text reveals (see MaskReveal): the em padding (negated
+   in layout) keeps overflow:hidden from shearing glyph ascenders/descenders
+   under a tight display line-height while the line animates up from behind it. */
+@utility mask-line {
+  overflow: hidden;
+  padding-block: 0.15em;
+  margin-block: -0.15em;
+}

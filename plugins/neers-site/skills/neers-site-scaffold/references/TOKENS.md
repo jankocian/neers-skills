@@ -1,20 +1,29 @@
 # Token architecture
 
-**The design system is `src/app/globals.css`.** Every value is declared there, once.
-This file holds only the rules CSS can't express.
+**The design system lives in `src/styles/`, split for legibility.** The entry
+`globals.css` imports three partials and holds only the cross-cutting bits (library
+imports, the dark custom-variant, the base layer):
+
+- **`theme.css`** — the `@theme` tokens + the `heading-*` / `type-*` utilities.
+- **`surfaces.css`** — the `.theme-*` scopes + the `@theme inline` mapping.
+- **`animations.css`** — keyframes + their `--animate-*` tokens + `mask-line`.
+
+Tailwind inlines every `@import` at build, and `@theme` blocks merge across files, so
+the split is purely organisational. Add a token in whichever partial it belongs to.
 
 `lib/design-tokens.ts` is the human layer — names, roles, usage notes, grouping, order.
 **It carries no values.** The style guide reads them from the CSS variables at runtime
 (`useTokenValue`), so a swatch can never disagree with the stylesheet. `bun run check`
-fails if the catalogue names a variable `globals.css` never declares.
+reads every partial and fails if the catalogue names a variable none of them declares.
 
 ## Three tiers
 
-1. **`@theme`** — primitives (`--color-*`, `--heading-*`, `--type-*`, `--radius-*`,
-   `--shadow-*`, `--ease-*`, `--container-*`). Generates the utilities.
-2. **`.theme-*` scopes** — each sets the complete shadcn token set
+1. **`@theme`** (theme.css) — primitives (`--color-*`, `--heading-*`, `--type-*`,
+   `--radius-*`, `--shadow-*`, `--ease-*`, `--container-*`). Generates the utilities.
+   Headings share one weight (600), set on the `heading-*` utility, not per token.
+2. **`.theme-*` scopes** (surfaces.css) — each sets the complete shadcn token set
    (`--background`, `--foreground`, `--primary`, `--border`, …).
-3. **`@theme inline`** — maps the shadcn tokens back to `--color-*`.
+3. **`@theme inline`** (surfaces.css) — maps the shadcn tokens back to `--color-*`.
 
 ## Rules
 
@@ -43,18 +52,18 @@ Open Sans out of the fallback stack.
 
 `tailwind-merge` (inside `cn()`) can't read the Tailwind theme. It resolves `text-*`
 with a validator: font-size is tried first but only accepts t-shirt sizes, and
-text-colour's validator returns true for anything. So a custom `text-lede` is
+text-colour's validator returns true for anything. So a custom `text-hero` is
 classified as a colour, and a following `text-muted-foreground` deletes it.
 
 ```
 cn("heading-d1", "text-muted-foreground")  →  both survive
-cn("text-lede",  "text-muted-foreground")  →  the size is gone
+cn("text-hero",  "text-muted-foreground")  →  the size is gone
 ```
 
 So the scale ships as `heading-*` and `type-*` `@utility` blocks. tailwind-merge has
 no conflict rule for those prefixes and leaves them alone; `cn()` stays a plain
-`twMerge(clsx())` with no config. Plain sizes — lede, body, small, caption — are just
-a size, so they use Tailwind's own `text-xl` / `text-base` / `text-sm` / `text-xs`.
+`twMerge(clsx())` with no config. Plain sizes — body, small, caption — are just
+a size, so they use Tailwind's own `text-base` / `text-sm` / `text-xs`.
 
 **Never add a level to the `text-*` namespace.**
 
@@ -77,7 +86,7 @@ size. One `<h1>` per page — `bun run test` enforces it.
 
 Three places:
 
-1. A `.theme-<name>` block in `globals.css` setting **every** shadcn token.
+1. A `.theme-<name>` block in `surfaces.css` setting **every** shadcn token.
 2. Its `--primary-hover` in the shared hover rule.
 3. `SURFACES` in `lib/design-tokens.ts`.
 

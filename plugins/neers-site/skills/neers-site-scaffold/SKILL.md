@@ -81,7 +81,9 @@ updating this template, never by a surprise in someone's project.
 
 ## Phase 2 — Tokens
 
-`globals.css`, three tiers. Full detail in **`references/TOKENS.md`**.
+`src/styles/` — an entry `globals.css` importing `theme.css` (tokens), `surfaces.css`
+(the `.theme-*` scopes + `@theme inline`) and `animations.css`. Three tiers, split for
+legibility. Full detail in **`references/TOKENS.md`**.
 
 1. **Primitives** in `@theme` → generates the utilities.
 2. **Surfaces** — `:root, .theme-base` plus `.theme-subtle`, `.theme-inverse`,
@@ -206,7 +208,7 @@ confirm the named command fails, revert.
 |---|---|
 | a `100vw` element inside a container with side padding | `test` → `document-overflow-x` @320 |
 | `className="w-[110vw]"` | `check` → arbitrary value |
-| a `--color-muted` primitive in `globals.css` | `check` → token collision |
+| a `--color-muted` primitive in `theme.css` | `check` → token collision |
 | a page with no `metadata` export | `check`, and the pre-commit hook |
 | a `lib/site.ts` route with no `page.tsx` | `check` |
 | an `<img>` with no `alt` | `test` → `image-alt`, and `seo` |

@@ -4,7 +4,7 @@ import localFont from "next/font/local";
 import { MotionProvider } from "~/components/motion/motion-provider";
 import { JsonLd, organizationSchema } from "~/lib/jsonld";
 import { site } from "~/lib/site";
-import "./globals.css";
+import "~/styles/globals.css";
 
 // The brand face. One variable file covers 100–900, self-hosted by
 // next/font/local: no external requests, and a metric-matched fallback is

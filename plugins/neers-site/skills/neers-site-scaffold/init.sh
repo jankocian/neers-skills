@@ -46,6 +46,6 @@ echo "  Still required before this builds:"
 echo "    src/app/fonts/Brand-Variable.woff2   the brand face"
 echo "    src/app/fonts/Brand-SemiBold.ttf     static instance, for OG images"
 echo "    src/lib/site.ts                      url, name, description, routes"
-echo "    src/app/globals.css                  the brand palette"
+echo "    src/styles/globals.css               the brand palette"
 echo
 echo "  Then:  bun run dev   ·   bun run check   ·   bun run test"

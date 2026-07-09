@@ -1,7 +1,7 @@
 /**
  * The easing vocabulary. Every animation takes its curve from here.
  *
- * These mirror the `--ease-*` tokens in globals.css. Motion animates in JS and can't
+ * These mirror the `--ease-*` tokens in theme.css. Motion animates in JS and can't
  * read a CSS custom property per frame, so the literals live in both places — change
  * one, change the other.
  *
