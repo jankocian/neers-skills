@@ -120,7 +120,10 @@ export function layoutAudit(cheap = false): Finding[] {
     if (cs.display === "none" || cs.visibility === "hidden") continue;
     const meaningful =
       !!el.textContent?.trim() ||
-      ["IMG", "SVG", "VIDEO", "BUTTON", "INPUT", "A"].includes(el.tagName);
+      // toUpperCase: an inline <svg> reports lowercase "svg".
+      ["IMG", "SVG", "VIDEO", "BUTTON", "INPUT", "A"].includes(
+        el.tagName.toUpperCase(),
+      );
     if (!meaningful) continue;
     const r = el.getBoundingClientRect();
     if (r.width === 0 || r.height === 0) {

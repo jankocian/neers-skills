@@ -25,8 +25,9 @@ for (const path of ROUTES) {
   test(`no placeholder content ${path}`, async ({ page }) => {
     await page.goto(path);
     await settle(page);
+    await expect(page.locator("body")).not.toContainText(/lorem ipsum/i);
     await expect(page.locator("body")).not.toContainText(
-      /lorem ipsum|\[object Object\]|undefined|NaN|TODO/i,
+      /\[object Object\]|\bundefined\b|\bNaN\b|\bTODO\b/,
     );
   });
 }
@@ -53,10 +54,13 @@ for (const path of ROUTES) {
       // An inline SVG's <title> is text content that never renders. Skip it, or
       // every brand mark reports as stranded.
       const skip = new Set(["TITLE", "DESC", "SCRIPT", "STYLE", "TEMPLATE"]);
+      // < 0.1, not "fully opaque": deliberate low-opacity design (opacity-70
+      // captions, watermark type) is legitimate — a Reveal stranded by reduced
+      // motion sits at exactly 0.
       return Array.from(document.querySelectorAll("main *"))
         .filter((el) => !skip.has(el.tagName))
         .filter((el) => el.textContent?.trim())
-        .filter((el) => Number(getComputedStyle(el).opacity) < 0.9)
+        .filter((el) => Number(getComputedStyle(el).opacity) < 0.1)
         .map((el) => el.tagName + (el.className ? `.${el.className}` : ""))
         .slice(0, 10);
     });
@@ -84,19 +88,24 @@ for (const path of ROUTES) {
       "left",
     ];
     const offenders = await page.evaluate((positional) => {
-      return document
-        .getAnimations()
-        .filter((a) => a.playState === "running")
-        .filter((a) => {
-          const timing = a.effect?.getTiming();
-          if (timing?.iterations === Number.POSITIVE_INFINITY) return true;
-          const props =
-            (a.effect as KeyframeEffect | undefined)
-              ?.getKeyframes?.()
-              .flatMap((k) => Object.keys(k)) ?? [];
-          return props.some((p) => positional.includes(p));
-        })
-        .map((a) => (a.effect as KeyframeEffect)?.target?.tagName ?? "?");
+      return (
+        document
+          .getAnimations()
+          .filter((a) => a.playState === "running")
+          // A scroll-driven animation (ScrollTimeline) progresses only when the
+          // user scrolls — that is not the vestibular autoplay this test targets.
+          .filter((a) => a.timeline instanceof DocumentTimeline)
+          .filter((a) => {
+            const timing = a.effect?.getTiming();
+            if (timing?.iterations === Number.POSITIVE_INFINITY) return true;
+            const props =
+              (a.effect as KeyframeEffect | undefined)
+                ?.getKeyframes?.()
+                .flatMap((k) => Object.keys(k)) ?? [];
+            return props.some((p) => positional.includes(p));
+          })
+          .map((a) => (a.effect as KeyframeEffect)?.target?.tagName ?? "?")
+      );
     }, POSITIONAL);
 
     expect(

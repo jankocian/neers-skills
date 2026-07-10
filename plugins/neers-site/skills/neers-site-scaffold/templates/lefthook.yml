@@ -26,13 +26,9 @@ pre-commit:
       run: bunx tsc --noEmit
 
     source:
-      # Three rules, all whole-project and all instant:
-      #   · every page exports `metadata`, and page <-> lib/site.ts agree both ways
-      #   · no --color-* primitive collides with a shadcn token (globals.css)
-      #   · no arbitrary Tailwind values for design decisions
-      #
-      # Whole-project rather than {staged_files}: two of the three compare files
-      # against each other, so a per-file view can't see the violation. It's still
-      # milliseconds.
-      glob: "src/**/*.{ts,tsx,css}"
+      # Whole-project source checks — SEO wiring, protected deps, token collisions,
+      # surface registration, arbitrary values (the list lives in
+      # tests/check-source.ts). No glob: the rules compare files against each other
+      # (and package.json), so a per-file view can't see the violations — and the
+      # script is milliseconds, so it just runs on every commit.
       run: bun tests/check-source.ts

@@ -28,7 +28,8 @@ export const SHOTS = [
  *              scanning mid-fade reports a transiently low contrast, and the
  *              layout audit measures a faded box. Both are false positives.
  *
- * Infinite animations are excluded, or this would never resolve.
+ * Infinite and scroll-driven animations are excluded, or this would never
+ * resolve — a ScrollTimeline animation's `finished` can't settle at scroll 0.
  *
  * The animation wait DRAINS, waits two frames, then DRAINS AGAIN. Motion starts
  * `whileInView` entrances a few frames after hydration (via IntersectionObserver),
@@ -81,6 +82,7 @@ export async function settle(page: import("@playwright/test").Page) {
           .getAnimations()
           .filter(
             (a) =>
+              a.timeline instanceof DocumentTimeline &&
               a.effect?.getTiming().iterations !== Number.POSITIVE_INFINITY,
           )
           .map((a) => a.finished.catch(() => undefined)),

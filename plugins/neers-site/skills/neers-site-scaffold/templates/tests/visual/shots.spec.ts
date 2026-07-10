@@ -9,7 +9,7 @@ import { ROUTES, SHOTS, settle } from "../routes";
 /**
  * Produces the inputs for the agent's vision pass. Writes to .neers/ (gitignored):
  *
- *   .neers/findings.json           deterministic layout findings, per route+width
+ *   .neers/findings-<route>-<width>.json   deterministic layout findings
  *   .neers/shots/<route>@<w>.<n>.png
  *
  * Viewport-height TILES, not full-page screenshots. A 6000px-tall marketing page

@@ -78,15 +78,20 @@ if (site.url.includes("example.com")) {
 }
 
 // A social share image. Next auto-emits og:image + twitter:image from the
-// `opengraph-image` file convention; without one, every share renders a blank card.
+// `opengraph-image` file convention — a static bitmap or a generated
+// `opengraph-image.tsx` (ImageResponse) both count; without one, every share
+// renders a blank card.
 const hasOgImage =
-  [...new Glob("src/app/opengraph-image.{png,jpg,jpeg,gif}").scanSync(".")]
-    .length > 0;
+  [
+    ...new Glob("src/app/opengraph-image.{png,jpg,jpeg,gif,tsx,ts}").scanSync(
+      ".",
+    ),
+  ].length > 0;
 if (!hasOgImage) {
   err(
-    "src/app/opengraph-image.(png|jpg): no social share image.\n" +
-      "    Drop a static bitmap there (~1200×630) — Next serves it as og:image and\n" +
-      "    twitter:image for the whole site.",
+    "src/app/opengraph-image.*: no social share image.\n" +
+      "    Drop a static bitmap there (~1200×630), or author opengraph-image.tsx —\n" +
+      "    Next serves it as og:image and twitter:image for the whole site.",
   );
 }
 
@@ -121,6 +126,10 @@ for (const file of pages) {
       `${file}: no \`metadata\` export.\n    Add: export const metadata = pageMetadata("${route}")`,
     );
   }
+  // A dynamic segment (`/blog/[slug]`) can't be a literal route entry. Its
+  // sitemap/llms coverage is the page's own job (generateStaticParams + per-entry
+  // sitemap additions); the metadata check above still applies.
+  if (route.includes("[")) continue;
   if (!registered.has(route)) {
     err(
       `${file}: route "${route}" is not registered in src/lib/site.ts.\n` +
@@ -219,11 +228,23 @@ if (css) {
 
   // …and a hand-written `theme-typo` in JSX is the same silent nothing: a raw class
   // string is never type-checked, so guard it by matching every `theme-*` class in the
-  // source against the known surface set.
+  // source against the known surface set. The lookbehind excludes `/` (import paths
+  // like `theme-provider`), `-` (attributes like `data-theme-color`) and word chars.
+  const THEME_CLASS = /(?<![\w/-])theme-([a-z][a-z0-9-]*)\b/g;
+  {
+    const hit = (s: string) => [...s.matchAll(THEME_CLASS)].map((m) => m[1]);
+    if (hit('className="theme-mint"')[0] !== "mint")
+      throw new Error("THEME_CLASS regex misses a class string");
+    if (
+      hit('from "~/components/theme-provider"').length > 0 ||
+      hit("data-theme-color").length > 0
+    )
+      throw new Error("THEME_CLASS regex false-matches a path or attribute");
+  }
   const known = new Set(surfaces);
   for (const file of new Glob("src/**/*.{ts,tsx}").scanSync(".")) {
     const src = await Bun.file(file).text();
-    for (const m of src.matchAll(/\btheme-([a-z][a-z0-9-]*)\b/g)) {
+    for (const m of src.matchAll(THEME_CLASS)) {
       if (!known.has(m[1])) {
         err(
           `${file}: \`theme-${m[1]}\` is not a surface.\n` +
