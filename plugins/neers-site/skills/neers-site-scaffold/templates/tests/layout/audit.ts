@@ -116,8 +116,10 @@ export function layoutAudit(cheap = false): Finding[] {
   for (const el of all) {
     // SVG elements preserve tagName case: an inline <title> is "title".
     if (NON_RENDERED.has(el.tagName.toUpperCase())) continue;
-    const cs = getComputedStyle(el);
-    if (cs.display === "none" || cs.visibility === "hidden") continue;
+    // checkVisibility walks ANCESTORS — reading display off the element alone
+    // misses every child of a `hidden md:block` wrapper (they report their own
+    // display + a 0×0 rect), flooding the audit with responsive-hidden noise.
+    if (!el.checkVisibility({ visibilityProperty: true })) continue;
     const meaningful =
       !!el.textContent?.trim() ||
       // toUpperCase: an inline <svg> reports lowercase "svg".
