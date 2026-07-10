@@ -30,7 +30,7 @@ export function organizationSchema(): WithContext<Organization> {
     "@type": "Organization",
     name: site.name,
     url: site.url,
-    logo: `${site.url}/icon-512.png`,
+    // TODO: logo: `{site.url}/logo.svg`,
     description: site.description,
     sameAs: Object.values(site.socials),
   };
