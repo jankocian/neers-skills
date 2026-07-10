@@ -12,12 +12,10 @@ The thought _"I know this library"_ is the signal to check.
 
 ## The stack, and why
 
-- **Prefer tokens; arbitrary values are the rare escape hatch.** Reach for a token
-  first — `p-6` over `p-[24px]`, `text-primary` over `text-[#d4ff3a]`. When the scale
-  genuinely can't express what the design needs (a one-off `grid-cols-[1.15fr_1fr]`, a
-  specific gradient position), an arbitrary value is fine — that's what it's for. It's a
-  smell to avoid, not a ban; `bun run check` only **warns**. Don't contort the markup to
-  dodge it, and don't hardcode a colour that a token already names.
+- **Prefer tokens; arbitrary values are a rare escape hatch, not a ban.** `p-6` not
+  `p-[24px]`, `text-primary` not `text-[#d4ff3a]`. When the scale genuinely can't express
+  something (a one-off `grid-cols-[1.15fr_1fr]`), an arbitrary value is fine — `bun run
+  check` only **warns**. Never hardcode a colour a token already names.
 - **A content image is an `<img>` / `next/image`**, not a CSS `background-image` —
   so it gets `srcset`, responsive variants, lazy-loading and an `alt`. `bg-[url(…)]`
   is only for a rare decorative texture. A CSS *gradient* (`bg-radial-…`) is fine —
@@ -32,17 +30,13 @@ The thought _"I know this library"_ is the signal to check.
 
 ## Build the whole design — stub the wiring, never the structure
 
-Build every section, button, and link the design shows. A section is not optional
-because its real content isn't ready: no video file yet → ship the player with a
-poster frame; app-store URL unknown → render the button, `disabled` or pointing at a
-placeholder; legal pages don't exist → link `/privacy` and let it 404 for now.
-**Missing data or assets is the normal state of a site under construction — it is
-never a reason to delete UI.** A half-built page the user can see and wire up beats a
-"clean" page missing half the design.
+Build every section, button and link the design shows. Missing content, URLs or
+assets is the normal state of a WIP site: **stub the wiring** (a placeholder href, a
+disabled button, a poster frame) — **never delete the UI.** A page the user can see
+and finish beats a "clean" one missing half the design.
 
-The one thing you may not fabricate is a **factual claim in structured data**: no
-invented `aggregateRating`, no fake review counts — that's a Google penalty, not a
-placeholder. Stub the UI; never stub a fact into JSON-LD.
+The one thing you may not fabricate is a **factual claim in structured data** — no
+invented ratings or review counts (a Google penalty). Stub the UI, never the fact.
 
 ## Tests are the litmus, not your workspace
 
@@ -118,31 +112,15 @@ size. Token rationale (and why the scale avoids the `text-*` namespace):
 
 ## Motion
 
-**Compose the primitives by default. Reach for `m.*` when a featured element needs
-custom motion. Never reach for `motion`.**
+**Compose the primitives (`Reveal`, `Stagger` + `StaggerItem`, `MaskReveal` in
+`src/components/motion/`). Use `m.*` for custom motion; never `import { motion }`** —
+it throws under `LazyMotion strict`. Easing comes from `src/lib/motion.ts`, never an
+inline `cubic-bezier`. Never add `will-change`.
 
-Primitives: `Reveal`, `Stagger` + `StaggerItem`, `MaskReveal` in
-`src/components/motion/`. `m` is Motion's own export (`motion/react-m`) — identical
-API, features supplied by `LazyMotion` via context. `import { motion }` throws under
-`strict`, because it silently re-bundles all 34kB.
-
-- **Easing always from `src/lib/motion.ts`.** No inline `cubic-bezier`.
-- `domAnimation` gives up only drag/pan and layout animations (`layout`, `layoutId`).
-  Need them? Nest a second `<LazyMotion features={domMax}>` around that subtree.
-- Hooks (`useScroll`, `useTransform`, `stagger`, `AnimatePresence`) come from
-  `motion/react` and are unaffected by `strict`.
-- **Never add `will-change`.** Motion doesn't manage it; a utility class pins a
-  compositor layer for the life of the page.
-
-**Never branch the DOM on `useReducedMotion`.** It causes a hydration mismatch
-and can strand elements at `opacity: 0` — a blank page for the users who need
-reduced motion. `<MotionConfig reducedMotion="user">` in `MotionProvider` already
-disables transforms and layout animations while letting opacity fade. That is
-the correct behaviour: WCAG's concern is vestibular motion, not fades.
-
-The exception is continuous motion (parallax, marquee, autoplay), which
-`MotionConfig` cannot see. Then branch the `transition` or a MotionValue range —
-never the markup. Full recipe: `neers-site-scaffold/references/MOTION.md`.
+**Never branch the DOM on `useReducedMotion`** — it can strand content at `opacity: 0`
+(a blank page). `<MotionConfig reducedMotion="user">` already handles reduced motion;
+continuous motion (parallax, marquee, autoplay) is the one exception. Recipes, and the
+`domAnimation`/`domMax` feature split: `neers-site-scaffold/references/MOTION.md`.
 
 ## SEO
 
@@ -150,9 +128,8 @@ never the markup. Full recipe: `neers-site-scaffold/references/MOTION.md`.
 route there. `sitemap.ts`, `robots.ts`, `llms.txt` and every page's `metadata`
 derive from it, and the SEO gate asserts coverage in both directions.
 
-`priority` on `next/image` is deprecated in Next 16 → `preload`. Prefer
-`loading="eager"` / `fetchPriority="high"`. Always set `sizes`. Metadata, JSON-LD and
-sitemap detail: `neers-site-scaffold/references/SEO.md`.
+`priority` on `next/image` is deprecated → use `preload`. Always set `sizes`.
+Metadata, JSON-LD and sitemap detail: `neers-site-scaffold/references/SEO.md`.
 
 ## The loop
 
