@@ -1,24 +1,28 @@
 import type { Metadata } from "next";
-import localFont from "next/font/local";
+import { Space_Grotesk } from "next/font/google";
 
 import { MotionProvider } from "~/components/motion/motion-provider";
 import { JsonLd, organizationSchema } from "~/lib/jsonld";
 import { site } from "~/lib/site";
 import "~/styles/globals.css";
 
-// The brand face. One variable file covers 100–900, self-hosted by
-// next/font/local: no external requests, and a metric-matched fallback is
-// generated automatically, so font-swap CLS is ~0.
+// The brand face. This is the DEFAULT path — most brands use a Google font, and
+// next/font/google downloads it at BUILD time and serves it from our own origin:
+// no runtime request to Google, and a metric-matched fallback keeps font-swap
+// CLS ~0.
 //
-// `variable` MUST be `--font-brand` — globals.css feeds exactly that name into
-// Tailwind's --font-sans. Rename it in one place and the site silently falls
-// back to system-ui.
-const brand = localFont({
-  src: "./fonts/Brand-Variable.woff2",
+// ▶ REPLACE Space_Grotesk with the real brand face:
+//   · Google font  → swap the import + call for any next/font/google export.
+//   · Purchased/custom .woff2 → use next/font/local instead (drop the file in
+//     ./fonts). Same variable name.
+//   Keep `variable: "--font-brand"` — theme.css feeds exactly that into
+//   --font-sans; rename it and the site silently falls back to system-ui.
+//   Never default to Inter / Roboto / Open Sans — the AI-slop fingerprints.
+//   Add `subsets` for the languages you need (e.g. "latin-ext" for Czech).
+const brand = Space_Grotesk({
   variable: "--font-brand",
-  weight: "100 900",
+  subsets: ["latin"],
   display: "swap",
-  fallback: ["ui-sans-serif", "system-ui", "-apple-system", "sans-serif"],
 });
 
 export const metadata: Metadata = {

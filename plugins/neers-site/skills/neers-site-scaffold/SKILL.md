@@ -53,10 +53,13 @@ Known-good as of 2026-07 — verify, don't trust:
 **Do not scaffold anything until you have these.** Ask, then wait. A placeholder
 becomes permanent.
 
-1. **The brand face.** A variable `.woff2`. If the user names a typeface instead,
-   decline **Inter, Roboto, Arial, Open Sans and system defaults** — they are the
-   fingerprints of AI-generated work. Say so, and ask for something with a point
-   of view.
+1. **The brand face.** Usually just a **typeface name** — most brands use a Google
+   font, and `next/font/google` self-hosts it at build (no runtime request, ~0 CLS),
+   so no file is needed. A purchased or custom face is a variable `.woff2` via
+   `next/font/local`. Either way, decline **Inter, Roboto, Arial, Open Sans and
+   system defaults** — the fingerprints of AI-generated work; ask for something with
+   a point of view. (The scaffold ships a working placeholder face, so a missing
+   answer here blocks *taste*, not the build.)
 2. **Brand colour**, site name, a one-line description, and the production URL.
 
 A logo is **not** required. When the user has one, follow `references/FAVICONS.md`;
@@ -96,7 +99,7 @@ legibility. Full detail in **`references/TOKENS.md`**.
 
 > ⚠ **Never name a primitive after a shadcn semantic token.** Tier 3 re-points every one
 > of them, so a primitive called `--color-muted` is silently overwritten by
-> `--color-muted: var(--muted)`. The warm grey is `--color-ink-muted`.
+> `--color-muted: var(--muted)`. Name neutrals on the ramp instead — `--color-neutral-600`.
 > `bun run check` enforces this.
 
 Type scale is `heading-d1 · heading-d2 · heading-h1 · heading-h2 · heading-h3` for

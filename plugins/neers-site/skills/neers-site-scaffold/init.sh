@@ -51,10 +51,13 @@ bash "$HERE/shadcn-diff.sh" || true
 echo
 echo "✓ scaffolded in $TARGET"
 echo
-echo "  Still required before this builds:"
-echo "    src/app/fonts/Brand-Variable.woff2   the brand face"
-echo "    src/app/opengraph-image.png          the social share image (~1200×630)"
-echo "    src/lib/site.ts                      url, name, description, routes"
-echo "    src/styles/globals.css               the brand palette"
+echo "  Required before it builds (bun run check enforces both):"
+echo "    src/lib/site.ts              set url, name, description, routes"
+echo "    src/app/opengraph-image.png  the social share image (~1200×630)"
+echo
+echo "  Replace before launch (the scaffold ships tasteful placeholders):"
+echo "    src/app/layout.tsx           the brand face — a next/font/google export,"
+echo "                                 or next/font/local for a purchased .woff2"
+echo "    src/styles/theme.css         the brand palette + type scale"
 echo
 echo "  Then:  bun run dev   ·   bun run check   ·   bun run test"
