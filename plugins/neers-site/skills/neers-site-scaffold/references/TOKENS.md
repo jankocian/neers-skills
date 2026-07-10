@@ -104,4 +104,3 @@ in `src/` names no surface. Both would otherwise render nothing, silently.
   `--secondary-hover`, a real colour step.
 - `var(--color-<brand>-x)` where the token doesn't exist resolves to empty. No error.
 - `@theme` edits don't reliably HMR under Turbopack. Restart the dev server.
-- No monospace: `code, kbd, samp, pre { font-family: inherit }`.

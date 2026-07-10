@@ -33,7 +33,7 @@ Instant, no browser, no build. If a rule *can* be checked from source, it belong
 `tsc` doubles as a JSON-LD validator — `schema-dts` makes a typo'd schema property a
 type error.
 
-`check-source.ts` asserts four things: SEO wiring both ways; no `--color-*` primitive
+`check-source.ts` asserts important things: SEO wiring both ways; no `--color-*` primitive, etc.
 sharing a name with a shadcn semantic token; every `varName` in `design-tokens.ts`
 actually declared in the `src/styles` partials; and no arbitrary Tailwind values (warning).
 

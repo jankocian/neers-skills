@@ -14,7 +14,7 @@ Read `.neers/findings-<route>-<width>.json` before you open a single PNG.
 
 ## Capture protocol
 
-`bun run test` already does all of this. It matters that you know why:
+What `bun run test` captures, and why:
 
 - **`reducedMotion: "reduce"`** — the single best flake-killer. A mid-animation frame
   is a false positive generator.
@@ -23,14 +23,15 @@ Read `.neers/findings-<route>-<width>.json` before you open a single PNG.
   downscaled to a vision model's input loses the 1–3px detail you're looking for.
   The overlap means nothing falls between two tiles.
 - **`375×812` (mobile) · `768×1024` (tablet) · `1440×900` (desktop).** 1920 rarely
-  reveals anything 1440 doesn't. Add `320×568` only for reflow.
-- `deviceScaleFactor: 2` **only** when judging text legibility — a 2× tile costs 4×
-  the tokens.
-- Dark mode too, if the site has it.
+  reveals anything 1440 doesn't.
 - Capped at 8 tiles per route/width. It warns when it truncates. **Repeat that warning
   in your report** — a silent cap reads as "covered everything".
 
-## The 12 points
+Capture more yourself (Playwright MCP) only when the review calls for it: `320×568`
+for reflow, `deviceScaleFactor: 2` when judging text legibility (a 2× tile costs 4×
+the tokens), and dark mode if the site has one.
+
+## The checklist
 
 Per tile, with the findings in hand:
 
@@ -58,8 +59,10 @@ Per tile, with the findings in hand:
     primary, nothing is.
 11. **Mobile.** Is the nav usable? Are touch targets ≥24×24 (ideally 44×44)? Does the
     hero still read at 375px, or has `d1` eaten the screen?
-12. **Dark mode.** Any element still carrying a light-mode-only colour — a white box
-    on a dark ground, an invisible border, text that vanishes into the surface.
+12. **Dark mode — only if the site has one.** Any element still carrying a
+    light-mode-only colour — a white box on a dark ground, an invisible border,
+    text that vanishes into the surface. (The scaffold ships light-only; its
+    `.theme-inverse` sections are covered by the normal capture.)
 
 ## Escalate to Playwright MCP only for state
 

@@ -134,8 +134,9 @@ time from a site root: `bash <plugin>/shadcn-diff.sh [component]`. Keeping our e
 is what keeps that diff readable, so `button.tsx` uses shadcn's base string verbatim and
 changes only the variants.
 
-Need something else? `bunx shadcn@latest add <name>`, then add it to `/style-guide` and to
-the `VENDORED` list in `shadcn-diff.sh`.
+Need something else? `bunx shadcn add <name>` (the pinned devDep, so results are
+reproducible), then add it to `/style-guide` and to the `VENDORED` list in
+`shadcn-diff.sh`.
 
 **The style guide IS the spec.** It composes the real `components/ui/*`.
 
@@ -160,19 +161,14 @@ Custom animation is allowed and expected for featured elements — use `m.*`, ne
 Then **invoke `web-animation-design`** against `src/components/motion/*` to settle
 easing and duration, and record the verdict in `.impeccable.md`.
 
-> ⚠ **Override `web-animation-design` on one point.** It says every animated
-> element needs its own `prefers-reduced-motion` query disabling *all* animation,
-> opacity included. Do not do that here. `reducedMotion="user"` already disables
-> transforms and layout animations while preserving opacity — which is what
-> Motion's own docs specify, and what WCAG intends (the concern is vestibular
-> motion, not fades). Branching the DOM on `useReducedMotion` causes a hydration
-> mismatch and can strand content at `opacity: 0`: a **blank page**. See
+> ⚠ **Override `web-animation-design` on reduced motion** — never disable opacity
+> fades or branch the DOM on `useReducedMotion`. The full reasoning lives in
 > `references/MOTION.md`.
 
 ## Phase 5 — Style guide
 
-`/style-guide`, twelve sections, data-driven from `lib/design-tokens.ts`,
-composing the **real** `components/ui/*`.
+`/style-guide`, data-driven from `lib/design-tokens.ts`, composing the **real**
+`components/ui/*`.
 
 Three layers keep it off the live site: `notFound()` in production,
 `robots: { index: false }`, and a `robots.txt` disallow via `privateRoutes`.

@@ -74,11 +74,10 @@ Notes that matter:
   per-element `prefers-reduced-motion` queries, both of which this project forbids.
   Then `web-animation-design` fires, because custom motion was written.
 
-- **When `web-animation-design` runs, override it on reduced motion.** It will tell
-  you to disable all animation, opacity included, per element. Don't. See
-  `neers-site-scaffold/references/MOTION.md` — `<MotionConfig reducedMotion="user">`
-  already does the right thing, and branching the DOM on `useReducedMotion`
-  strands content at `opacity: 0`.
+- **When `web-animation-design` runs, override it on reduced motion** — never
+  disable opacity fades or branch the DOM on `useReducedMotion`. The full
+  reasoning lives in the project's `AGENTS.md` (and
+  `neers-site-scaffold/references/MOTION.md`).
 
 ## 4. Gate
 

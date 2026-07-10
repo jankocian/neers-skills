@@ -46,7 +46,7 @@ the element, and children need no colour utilities at all.
 
 1. **Check the registry first.** Before building ANY component, check whether
    shadcn provides one — the `shadcn` MCP (`search_items_in_registries`) or
-   `bunx shadcn@latest add <name>`.
+   `bunx shadcn add <name>`.
 2. **`shadcn add`, then customize.** Customizing the generated file in place is
    correct. Hand-writing a replacement for a component shadcn provides is
    **forbidden**.
