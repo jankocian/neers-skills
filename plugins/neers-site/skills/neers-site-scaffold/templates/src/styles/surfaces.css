@@ -116,9 +116,12 @@
    imperceptible). Defined once per group after the surfaces. */
 :root,
 .theme-base,
-.theme-subtle,
-.theme-inverse {
+.theme-subtle {
   --primary-hover: var(--color-brand-strong);
+}
+/* On dark, hover brightens — `brand-strong` would sink into the ground. */
+.theme-inverse {
+  --primary-hover: var(--color-brand-soft);
 }
 .theme-brand {
   --primary-hover: var(--color-subtle);

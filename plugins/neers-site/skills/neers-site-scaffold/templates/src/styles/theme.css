@@ -9,7 +9,9 @@
      the values are placeholders, not decisions.
    Named animations live in animations.css.
    ========================================================================== */
-@theme {
+/* `static`: emit every token even before a utility uses it — the style guide
+   reads values from the cascade at runtime, which Tailwind's scan can't see. */
+@theme static {
   /* — PLACEHOLDER brand palette — replace with the brand ————————————————
      Neutrals tinted slightly warm; one accent. Never pure #000 / #fff. */
   --color-brand: #4f46e5; /* the one action colour */
