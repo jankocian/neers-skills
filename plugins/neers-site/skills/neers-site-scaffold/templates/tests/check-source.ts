@@ -344,10 +344,14 @@ for (const s of [
   if (flags(s)) throw new Error(`ARBITRARY regex false positive: ${s}`);
 }
 
+// Every hand-written component, not just app/ — the feature agent writes most of
+// its markup under components/, and all of it gets the same arbitrary-value warning.
+// Vendored shadcn under components/ui is exempt: its base cva strings legitimately
+// carry arbitrary values and are frozen, not design decisions.
 const scanned = [
   ...new Glob("src/app/**/*.{ts,tsx}").scanSync("."),
-  ...new Glob("src/components/{brand,motion,style-guide}/**/*.tsx").scanSync(
-    ".",
+  ...[...new Glob("src/components/**/*.tsx").scanSync(".")].filter(
+    (f) => !f.includes("/components/ui/"),
   ),
 ];
 

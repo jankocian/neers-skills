@@ -18,11 +18,10 @@ The thought _"I know this library"_ is the signal to check.
   specific gradient position), an arbitrary value is fine — that's what it's for. It's a
   smell to avoid, not a ban; `bun run check` only **warns**. Don't contort the markup to
   dodge it, and don't hardcode a colour that a token already names.
-- **Never a CSS background-image for content.** A photo, screenshot, or illustration
-  ships as a real `<img>` / `next/image` with `sizes` — so it gets `srcset`, responsive
-  variants, lazy-loading and an `alt`. `background-image` / `bg-[url(…)]` is only for a
-  rare decorative texture that is not content. A CSS *gradient* (`bg-radial-…`,
-  `bg-linear-…`) is fine — it's not an image.
+- **A content image is an `<img>` / `next/image`**, not a CSS `background-image` —
+  so it gets `srcset`, responsive variants, lazy-loading and an `alt`. `bg-[url(…)]`
+  is only for a rare decorative texture. A CSS *gradient* (`bg-radial-…`) is fine —
+  it's not an image.
 - **shadcn-first.** See below.
 - **Surfaces invert; tokens never repeat.** Colour inversion happens only in a
   `.theme-*` scope in `surfaces.css`. Never `.dark`, never per-element.
