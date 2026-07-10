@@ -32,6 +32,12 @@ Do not hand back to the user until step 4 is green.
 there; don't rebuild it from memory.** It's the same contract `bun run check` enforces at
 commit time, so anything it states is a hard rule, not a preference.
 
+**Build the whole design; stub the wiring.** Every section, button and link the design
+shows gets built — missing content, URLs or legal pages are the normal state of a WIP
+site, never a reason to drop UI. Poster-only video, a placeholder route that 404s, a
+disabled store button: all fine. And never edit `tests/` to go green — a failure means
+the site is wrong. (Both rules live in full in `AGENTS.md`.)
+
 When a rule isn't enough, the depth lives in the scaffold references:
 `TOKENS.md` (type + colour tokens), `MOTION.md` (the primitives and `strict`),
 `SEO.md` (metadata, JSON-LD, sitemap), `CHECKS.md` (what the gate actually enforces).

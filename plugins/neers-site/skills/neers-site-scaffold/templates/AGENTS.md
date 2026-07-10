@@ -12,8 +12,17 @@ The thought _"I know this library"_ is the signal to check.
 
 ## The stack, and why
 
-- **Tokens, never arbitrary values.** No `text-[#fff]`, no `p-[37px]`. The one
-  sanctioned exception is an inline `style` rendering a literal token value.
+- **Prefer tokens; arbitrary values are the rare escape hatch.** Reach for a token
+  first — `p-6` over `p-[24px]`, `text-primary` over `text-[#d4ff3a]`. When the scale
+  genuinely can't express what the design needs (a one-off `grid-cols-[1.15fr_1fr]`, a
+  specific gradient position), an arbitrary value is fine — that's what it's for. It's a
+  smell to avoid, not a ban; `bun run check` only **warns**. Don't contort the markup to
+  dodge it, and don't hardcode a colour that a token already names.
+- **Never a CSS background-image for content.** A photo, screenshot, or illustration
+  ships as a real `<img>` / `next/image` with `sizes` — so it gets `srcset`, responsive
+  variants, lazy-loading and an `alt`. `background-image` / `bg-[url(…)]` is only for a
+  rare decorative texture that is not content. A CSS *gradient* (`bg-radial-…`,
+  `bg-linear-…`) is fine — it's not an image.
 - **shadcn-first.** See below.
 - **Surfaces invert; tokens never repeat.** Colour inversion happens only in a
   `.theme-*` scope in `surfaces.css`. Never `.dark`, never per-element.
@@ -21,6 +30,28 @@ The thought _"I know this library"_ is the signal to check.
 - **A custom focus ring must survive `outline-none`.** Tailwind v4's `outline-none`
   zeroes `--tw-outline-style`, so `outline-2` alone renders nothing and fails WCAG 2.4.7
   silently. Pair it with `focus-visible:outline-solid`, or prefer `focus-visible:ring-2`.
+
+## Build the whole design — stub the wiring, never the structure
+
+Build every section, button, and link the design shows. A section is not optional
+because its real content isn't ready: no video file yet → ship the player with a
+poster frame; app-store URL unknown → render the button, `disabled` or pointing at a
+placeholder; legal pages don't exist → link `/privacy` and let it 404 for now.
+**Missing data or assets is the normal state of a site under construction — it is
+never a reason to delete UI.** A half-built page the user can see and wire up beats a
+"clean" page missing half the design.
+
+The one thing you may not fabricate is a **factual claim in structured data**: no
+invented `aggregateRating`, no fake review counts — that's a Google penalty, not a
+placeholder. Stub the UI; never stub a fact into JSON-LD.
+
+## Tests are the litmus, not your workspace
+
+`tests/` is a universal floor that is identical on every neers site. **Never edit a
+test, an audit, or an allowlist to make a build pass** — a green suite you had to edit
+proves nothing. A failure means the *site* is wrong: fix the site. If you are certain a
+test is wrong for **every** site (not just yours), that's a plugin bug to report, not a
+local patch.
 
 ## Layout
 
