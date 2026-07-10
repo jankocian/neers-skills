@@ -37,16 +37,22 @@ time and `bg-background` inside `.theme-inverse` renders the light colour.
 every one of them, so `--color-muted: var(--muted)` silently overwrites a primitive
 of that name and the colour it fed resolves wrong. Forbidden: `muted`, `accent`,
 `primary`, `secondary`, `card`, `popover`, `border`, `input`, `ring`, `destructive`,
-`background`, `foreground`. Use `--color-ink-muted` and friends.
+`background`, `foreground`. Give primitives distinct names — the neutral ramp
+(`--color-neutral-600` …) and `--color-brand`, never a bare shadcn token name.
 `bun run check` enforces this.
 
-**No arbitrary values in markup.** `w-[110vw]`, `text-[#fff]`, `md:p-[37px]`. The one
-exception is an inline `style` rendering a literal token value. `bun run check`
-enforces this.
+**Prefer tokens; arbitrary values are the rare escape hatch.** Reach for the scale
+first — a hardcoded `text-[#fff]` where `text-foreground` exists is the real mistake.
+But when the design needs something the scale can't express — a one-off
+`grid-cols-[1.15fr_1fr]`, a specific gradient stop — an arbitrary value is correct, not
+forbidden. `bun run check` **warns**, it does not block; don't distort the markup to
+silence it. (Content images are the firm rule: a real `<img>`/`next/image`, never a CSS
+`background-image` — see AGENTS.md.)
 
-**`--font-brand` must match the `variable:` passed to `next/font/local`** in
-`app/layout.tsx`, or the site silently falls back to system-ui. Keep Inter, Roboto and
-Open Sans out of the fallback stack.
+**`--font-brand` must match the `variable:` passed to `next/font`** (google or local)
+in `app/layout.tsx`, or the site silently falls back to system-ui. A Google face is the
+default (`next/font/google` self-hosts it at build); a purchased `.woff2` uses
+`next/font/local`. Keep Inter, Roboto and Open Sans out of the fallback stack.
 
 ## The `text-*` trap
 

@@ -1,33 +1,34 @@
 /* ============================================================================
    Design tokens — the brand-agnostic foundation (Tailwind v4 @theme).
-   Every value here generates a utility. UI references the semantic tokens only;
-   arbitrary values in markup are banned.
+   Every value here generates a utility. UI reaches for the SEMANTIC tokens
+   (bg-background, text-foreground …); these raw primitives are what surfaces.css
+   maps them to. Prefer a token over an arbitrary value — but an arbitrary value is
+   fine when the scale genuinely can't express something (see AGENTS.md).
 
    ▶ This palette and the .theme-* surfaces (surfaces.css) are a DEMO baseline: on
-     kickoff, replace the values to match the real design system and delete any it
-     doesn't use — keep the structure, not the leftovers. The names are the system;
-     the values are placeholders, not decisions.
+     kickoff, replace the VALUES to match the real design system. The NAMES —
+     neutral-*, brand, accent-* — are the permanent system; the hexes are
+     placeholders, not decisions. Delete ramp steps and accents you don't use.
    Named animations live in animations.css.
    ========================================================================== */
 /* `static`: emit every token even before a utility uses it — the style guide
    reads values from the cascade at runtime, which Tailwind's scan can't see. */
 @theme static {
-  /* — PLACEHOLDER brand palette — replace with the brand ————————————————
-     Neutrals tinted slightly warm; one accent. Never pure #000 / #fff. */
+  /* — brand — the one action colour. Placeholder — replace with the brand. */
   --color-brand: #4f46e5; /* the one action colour */
-  --color-brand-strong: #4338ca; /* hover / pressed — on light */
-  --color-brand-soft: #818cf8; /* brightened — on dark */
+  --color-brand-strong: #4338ca; /* hover / pressed — on a light surface */
+  --color-brand-soft: #818cf8; /* hover / pressed — on a dark surface */
 
-  --color-paper: #fafaf9; /* default light ground */
-  --color-subtle: #f0efed; /* quieter light ground */
-  --color-ink: #1c1b1a; /* primary text / inverse ground */
-  --color-ink-raised: #2b2927; /* raised panel on dark */
-  /* NOT `--color-muted`: that name collides with shadcn's `muted` semantic
-     token, which `@theme inline` re-points at `--muted` in surfaces.css. The
-     primitive would be silently overwritten and every `text-muted-foreground`
-     would render at ~1.05:1 contrast. */
-  --color-ink-muted: #57534e; /* secondary text (warm grey) */
-  --color-faint: #a8a29e; /* tertiary / disabled */
+  /* — neutral ramp — the greyscale surfaces.css is built from. 50 = lightest,
+     900 = darkest; whether a surface reads light- or dark-mode is ITS call, not
+     the ramp's. A PARTIAL ramp — add the steps your design needs. Warm-tinted
+     here; never pure #000 / #fff. */
+  --color-neutral-50: #fafaf9; /* lightest ground */
+  --color-neutral-100: #f0efed; /* quieter ground */
+  --color-neutral-400: #a8a29e; /* tertiary / disabled text */
+  --color-neutral-600: #57534e; /* secondary text */
+  --color-neutral-800: #2b2927; /* raised panel on a dark ground */
+  --color-neutral-900: #1c1b1a; /* primary text / darkest ground */
 
   /* — accent hues · a pinch of spice (used sparingly for tags/marks) ———— */
   --color-accent-blue: #3b82f6;
@@ -117,7 +118,7 @@
   --header-h: 4rem;
 
   /* — type family — the brand font; `--font-brand` is set on <html> by
-     next/font/local in app/layout.tsx. The name MUST match `variable:` there.
+     next/font (google or local) in app/layout.tsx. The name MUST match `variable:` there.
      No Inter / Roboto / Open Sans in the fallback stack: a fallback that is
      itself a generic web font defeats the point, and those three are the
      fingerprints of AI-generated work. Fall through to the system stack. */

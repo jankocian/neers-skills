@@ -18,42 +18,46 @@ export type ColorGroup = {
 
 export const PRIMITIVES: ColorGroup[] = [
   {
-    title: "brand & neutrals",
+    title: "brand",
     description:
-      "One accent does the talking; ink on paper. Placeholders — replace with the brand.",
+      "One accent does the talking. Placeholders — replace with the brand.",
     tokens: [
       { name: "brand", varName: "--color-brand", note: "the one action" },
       {
         name: "brand strong",
         varName: "--color-brand-strong",
-        note: "hover · on light",
+        note: "hover · on a light surface",
       },
       {
         name: "brand soft",
         varName: "--color-brand-soft",
-        note: "hover · on dark",
+        note: "hover · on a dark surface",
       },
-      { name: "ink", varName: "--color-ink", note: "text / inverse ground" },
-      {
-        name: "ink raised",
-        varName: "--color-ink-raised",
-        note: "raised · on dark",
-      },
-      {
-        name: "subtle",
-        varName: "--color-subtle",
-        note: "quieter light ground",
-      },
-      { name: "paper", varName: "--color-paper", note: "default page" },
     ],
   },
   {
-    title: "neutral inks",
+    title: "neutral ramp",
     description:
-      "Warm greys for secondary and tertiary text — tinted toward the brand, never cold.",
+      "The greyscale the surfaces are built from — lightest (50) to darkest (900). A partial ramp; add the steps your design needs.",
     tokens: [
-      { name: "muted", varName: "--color-ink-muted", note: "secondary text" },
-      { name: "faint", varName: "--color-faint", note: "tertiary / disabled" },
+      { name: "50", varName: "--color-neutral-50", note: "lightest ground" },
+      { name: "100", varName: "--color-neutral-100", note: "quieter ground" },
+      {
+        name: "400",
+        varName: "--color-neutral-400",
+        note: "tertiary / disabled",
+      },
+      { name: "600", varName: "--color-neutral-600", note: "secondary text" },
+      {
+        name: "800",
+        varName: "--color-neutral-800",
+        note: "raised on a dark ground",
+      },
+      {
+        name: "900",
+        varName: "--color-neutral-900",
+        note: "primary text / darkest ground",
+      },
     ],
   },
   {

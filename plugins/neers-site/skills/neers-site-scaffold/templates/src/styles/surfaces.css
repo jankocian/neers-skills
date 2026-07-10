@@ -13,23 +13,27 @@
    ========================================================================== */
 :root,
 .theme-base {
-  --background: var(--color-paper);
-  --foreground: var(--color-ink);
-  --card: var(--color-paper);
-  --card-foreground: var(--color-ink);
-  --popover: var(--color-paper);
-  --popover-foreground: var(--color-ink);
+  --background: var(--color-neutral-50);
+  --foreground: var(--color-neutral-900);
+  --card: var(--color-neutral-50);
+  --card-foreground: var(--color-neutral-900);
+  --popover: var(--color-neutral-50);
+  --popover-foreground: var(--color-neutral-900);
   --primary: var(--color-brand);
-  --primary-foreground: var(--color-paper);
-  --secondary: var(--color-subtle);
-  --secondary-foreground: var(--color-ink);
-  --muted: var(--color-subtle);
-  --muted-foreground: var(--color-ink-muted);
-  --accent: color-mix(in oklab, var(--color-ink) 6%, var(--color-paper));
-  --accent-foreground: var(--color-ink);
+  --primary-foreground: var(--color-neutral-50);
+  --secondary: var(--color-neutral-100);
+  --secondary-foreground: var(--color-neutral-900);
+  --muted: var(--color-neutral-100);
+  --muted-foreground: var(--color-neutral-600);
+  --accent: color-mix(
+    in oklab,
+    var(--color-neutral-900) 6%,
+    var(--color-neutral-50)
+  );
+  --accent-foreground: var(--color-neutral-900);
   --destructive: var(--color-danger);
-  --border: color-mix(in oklab, var(--color-ink) 12%, transparent);
-  --input: color-mix(in oklab, var(--color-ink) 22%, transparent);
+  --border: color-mix(in oklab, var(--color-neutral-900) 12%, transparent);
+  --input: color-mix(in oklab, var(--color-neutral-900) 22%, transparent);
   --ring: var(--color-brand);
   --radius: 0.5rem;
   color-scheme: light;
@@ -37,78 +41,98 @@
 
 /* a slightly-off light surface — for raised hero / alternating sections */
 .theme-subtle {
-  --background: var(--color-subtle);
-  --foreground: var(--color-ink);
-  --card: var(--color-subtle);
-  --card-foreground: var(--color-ink);
-  --popover: var(--color-subtle);
-  --popover-foreground: var(--color-ink);
+  --background: var(--color-neutral-100);
+  --foreground: var(--color-neutral-900);
+  --card: var(--color-neutral-100);
+  --card-foreground: var(--color-neutral-900);
+  --popover: var(--color-neutral-100);
+  --popover-foreground: var(--color-neutral-900);
   --primary: var(--color-brand);
-  --primary-foreground: var(--color-paper);
-  --secondary: var(--color-paper);
-  --secondary-foreground: var(--color-ink);
-  --muted: var(--color-paper);
-  --muted-foreground: var(--color-ink-muted);
-  --accent: color-mix(in oklab, var(--color-ink) 6%, var(--color-subtle));
-  --accent-foreground: var(--color-ink);
+  --primary-foreground: var(--color-neutral-50);
+  --secondary: var(--color-neutral-50);
+  --secondary-foreground: var(--color-neutral-900);
+  --muted: var(--color-neutral-50);
+  --muted-foreground: var(--color-neutral-600);
+  --accent: color-mix(
+    in oklab,
+    var(--color-neutral-900) 6%,
+    var(--color-neutral-100)
+  );
+  --accent-foreground: var(--color-neutral-900);
   --destructive: var(--color-danger);
-  --border: color-mix(in oklab, var(--color-ink) 14%, transparent);
-  --input: color-mix(in oklab, var(--color-ink) 24%, transparent);
+  --border: color-mix(in oklab, var(--color-neutral-900) 14%, transparent);
+  --input: color-mix(in oklab, var(--color-neutral-900) 24%, transparent);
   --ring: var(--color-brand);
   color-scheme: light;
 }
 
 /* the inverse (dark) surface — the inversion showcase */
 .theme-inverse {
-  --background: var(--color-ink);
-  --foreground: var(--color-paper);
-  --card: var(--color-ink-raised);
-  --card-foreground: var(--color-paper);
-  --popover: var(--color-ink-raised);
-  --popover-foreground: var(--color-paper);
+  --background: var(--color-neutral-900);
+  --foreground: var(--color-neutral-50);
+  --card: var(--color-neutral-800);
+  --card-foreground: var(--color-neutral-50);
+  --popover: var(--color-neutral-800);
+  --popover-foreground: var(--color-neutral-50);
   --primary: var(--color-brand);
-  --primary-foreground: var(--color-paper);
-  --secondary: var(--color-ink-raised);
-  --secondary-foreground: var(--color-paper);
-  --muted: var(--color-ink-raised);
-  --muted-foreground: color-mix(in oklab, var(--color-paper) 72%, transparent);
-  --accent: color-mix(in oklab, var(--color-paper) 8%, var(--color-ink));
-  --accent-foreground: var(--color-paper);
+  --primary-foreground: var(--color-neutral-50);
+  --secondary: var(--color-neutral-800);
+  --secondary-foreground: var(--color-neutral-50);
+  --muted: var(--color-neutral-800);
+  --muted-foreground: color-mix(
+    in oklab,
+    var(--color-neutral-50) 72%,
+    transparent
+  );
+  --accent: color-mix(
+    in oklab,
+    var(--color-neutral-50) 8%,
+    var(--color-neutral-900)
+  );
+  --accent-foreground: var(--color-neutral-50);
   --destructive: color-mix(
     in oklab,
     var(--color-danger) 70%,
-    var(--color-paper)
+    var(--color-neutral-50)
   );
-  --border: color-mix(in oklab, var(--color-paper) 12%, transparent);
-  --input: color-mix(in oklab, var(--color-paper) 24%, transparent);
+  --border: color-mix(in oklab, var(--color-neutral-50) 12%, transparent);
+  --input: color-mix(in oklab, var(--color-neutral-50) 24%, transparent);
   --ring: var(--color-brand-soft);
   color-scheme: dark;
 }
 
-/* the accent field — a full-bleed brand-colour band (the action becomes paper) */
+/* the accent field — a full-bleed brand-colour band (the action becomes the light neutral) */
 .theme-brand {
   --background: var(--color-brand);
-  --foreground: var(--color-paper);
+  --foreground: var(--color-neutral-50);
   --card: var(--color-brand-strong);
-  --card-foreground: var(--color-paper);
+  --card-foreground: var(--color-neutral-50);
   --popover: var(--color-brand-strong);
-  --popover-foreground: var(--color-paper);
-  --primary: var(--color-paper);
+  --popover-foreground: var(--color-neutral-50);
+  --primary: var(--color-neutral-50);
   --primary-foreground: var(--color-brand);
   --secondary: var(--color-brand-strong);
-  --secondary-foreground: var(--color-paper);
+  --secondary-foreground: var(--color-neutral-50);
   --muted: var(--color-brand-strong);
-  --muted-foreground: color-mix(in oklab, var(--color-paper) 84%, transparent);
-  --accent: color-mix(in oklab, var(--color-paper) 14%, var(--color-brand));
-  --accent-foreground: var(--color-paper);
+  --muted-foreground: color-mix(
+    in oklab,
+    var(--color-neutral-50) 84%,
+    transparent
+  );
+  --accent: color-mix(
+    in oklab,
+    var(--color-neutral-50) 14%,
+    var(--color-brand)
+  );
+  --accent-foreground: var(--color-neutral-50);
   --destructive: color-mix(
     in oklab,
     var(--color-danger) 70%,
-    var(--color-paper)
+    var(--color-neutral-50)
   );
-  --border: color-mix(in oklab, var(--color-paper) 34%, transparent);
-  --input: color-mix(in oklab, var(--color-paper) 55%, transparent);
-  --ring: var(--color-paper);
+  --border: color-mix(in oklab, var(--color-neutral-50) 34%, transparent);
+  --input: color-mix(in oklab, var(--color-neutral-50) 55%, transparent);
+  --ring: var(--color-neutral-50);
   color-scheme: dark;
 }
 
@@ -124,7 +148,7 @@
   --primary-hover: var(--color-brand-soft);
 }
 .theme-brand {
-  --primary-hover: var(--color-subtle);
+  --primary-hover: var(--color-neutral-100);
 }
 :root,
 .theme-base,

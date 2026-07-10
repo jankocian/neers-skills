@@ -173,7 +173,9 @@ const INDIRECT_DECL = /(--color-[a-z0-9-]+)\s*:\s*var\(/g;
       "token-collision regex fails to detect the canonical clash",
     );
   }
-  if ([...":  var(--color-ink-muted);".matchAll(INDIRECT_DECL)].length !== 0) {
+  if (
+    [...":  var(--color-neutral-600);".matchAll(INDIRECT_DECL)].length !== 0
+  ) {
     throw new Error("token-collision regex false-matches a var() reference");
   }
 }
@@ -187,7 +189,7 @@ if (css) {
         `${CSS}: \`${name}\` is defined both as a literal primitive and as ` +
           `\`var(...)\` in \`@theme inline\`.\n` +
           `    The inline mapping wins and the primitive is silently lost.\n` +
-          `    Rename the primitive (e.g. --color-ink-muted), never the shadcn token.`,
+          `    Rename the primitive (e.g. --color-neutral-600), never the shadcn token.`,
       );
     }
   }

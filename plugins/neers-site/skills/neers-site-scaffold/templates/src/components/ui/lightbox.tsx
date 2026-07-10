@@ -40,7 +40,7 @@ function Lightbox({ slides, index, onClose }: LightboxProps) {
       styles={{
         container: {
           backgroundColor:
-            "color-mix(in oklab, var(--color-ink) 92%, transparent)",
+            "color-mix(in oklab, var(--color-neutral-900) 92%, transparent)",
         },
       }}
     />
