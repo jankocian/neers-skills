@@ -1,6 +1,7 @@
 import { Button as ButtonPrimitive } from "@base-ui/react/button";
 import { cva, type VariantProps } from "class-variance-authority";
 import Link from "next/link";
+import type { ComponentPropsWithoutRef } from "react";
 
 import { cn } from "~/lib/utils";
 
@@ -8,7 +9,7 @@ import { cn } from "~/lib/utils";
  * The one button system.
  *
  * The base string is shadcn's, unchanged — keep it that way so
- * `bunx shadcn@latest add button --diff` stays readable. Brand styling arrives
+ * `bunx shadcn add button --diff` stays readable. Brand styling arrives
  * through the surface-aware tokens, so the same variant renders correctly on every
  * surface: `--primary` is remapped inside each `.theme-*` scope.
  *
@@ -59,14 +60,20 @@ type ButtonProps = ButtonPrimitive.Props &
   };
 
 function Button({ className, variant, size, href, ...props }: ButtonProps) {
-  return (
-    <ButtonPrimitive
-      data-slot="button"
-      className={cn(buttonVariants({ variant, size, className }))}
-      {...(href ? { render: <Link href={href} /> } : {})}
-      {...props}
-    />
-  );
+  const classes = cn(buttonVariants({ variant, size, className }));
+  // A link is not a button: the primitive would stamp `type="button"` onto the
+  // anchor (and warn in dev), so `href` bypasses it and keeps real link semantics.
+  if (href) {
+    return (
+      <Link
+        data-slot="button"
+        href={href}
+        className={classes}
+        {...(props as ComponentPropsWithoutRef<"a">)}
+      />
+    );
+  }
+  return <ButtonPrimitive data-slot="button" className={classes} {...props} />;
 }
 
 export type { ButtonProps };
