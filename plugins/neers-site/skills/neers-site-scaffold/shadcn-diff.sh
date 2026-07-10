@@ -21,10 +21,16 @@ targets="${1:-$VENDORED}"
 changed=0
 for c in $targets; do
   [ -f "src/components/ui/$c.tsx" ] || continue
-  out="$(bunx shadcn@latest add "$c" --diff 2>/dev/null || true)"
+  # `bunx shadcn` (no @latest): uses the project's pinned devDep, reproducibly.
+  if ! out="$(bunx shadcn add "$c" --diff 2>&1)"; then
+    printf '⚠ %s — diff failed (offline? registry down?): %s\n' "$c" "$(printf '%s' "$out" | head -1)"
+    continue
+  fi
   case "$out" in
-    *---*|*+++*) printf '\n── %s ──\n%s\n' "$c" "$out"; changed=1 ;;
-    *)          printf '✓ %s — up to date with upstream\n' "$c" ;;
+    *---*|*+++*)   printf '\n── %s ──\n%s\n' "$c" "$out"; changed=1 ;;
+    *"No changes"*) printf '✓ %s — up to date with upstream\n' "$c" ;;
+    # Anything else is NOT "up to date" — say so instead of a false green check.
+    *)             printf '⚠ %s — unrecognised diff output, inspect by hand:\n%s\n' "$c" "$out" ;;
   esac
 done
 

@@ -11,6 +11,12 @@ set -euo pipefail
 TARGET="${1:?usage: ./init.sh <target-dir>}"
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
+# Runs once. A rerun over an edited scaffold would silently clobber it.
+if [ -e "$TARGET/package.json" ]; then
+  echo "✗ $TARGET already has a package.json — refusing to overwrite" >&2
+  exit 1
+fi
+
 mkdir -p "$TARGET"
 cp -R "$HERE/templates/." "$TARGET/"
 cd "$TARGET"
@@ -30,7 +36,10 @@ bun install
 bun update
 bun audit || true
 
-bunx playwright install --with-deps chromium
+# Chromium for the test suite. Non-fatal: `--with-deps` wants sudo on Linux, and a
+# browser install must never abort an otherwise-complete scaffold.
+bunx playwright install chromium ||
+  echo "⚠ browser install failed — run \`bunx playwright install chromium\` before \`bun run test\`"
 
 # The vendored shadcn components are frozen at authoring time. Show what upstream changed
 # since, so the user can adopt improvements (new a11y attrs, fixes) by hand. Informational
