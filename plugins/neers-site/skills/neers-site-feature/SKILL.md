@@ -44,6 +44,11 @@ When a rule isn't enough, the depth lives in the scaffold references:
 
 Run `bun run check` as you go — under 3 seconds.
 
+Before the gate, review page composition: `page.tsx` should read as route concerns
+plus ordered sections, not section implementation. When restructuring existing
+code, account for every active and dormant section and preserve comments that
+explain non-obvious behavior.
+
 ## 3. Design passes — adaptive, not a judgment call
 
 Always, in this order:

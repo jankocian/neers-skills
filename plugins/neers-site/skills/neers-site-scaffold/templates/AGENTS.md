@@ -66,6 +66,19 @@ the element, and children need no colour utilities at all.
 </footer>
 ```
 
+## Page composition
+
+App Router `page.tsx` files own route concerns only: metadata, route-level data
+loading, page chrome, and ordered section composition.
+
+Put each cohesive visual band in
+`src/components/<route>/<name>-section.tsx` as a named export. The section owns
+its `Section` + `Container`, markup, assets, single-consumer data, and private
+helpers. Render repeated content from a colocated typed array.
+
+Keep helpers private until real reuse exists. Use direct imports, no page-folder
+barrels, and keep `"use client"` in the smallest interactive leaf.
+
 ## UI components — shadcn/ui first (NON-NEGOTIABLE)
 
 1. **Check the registry first.** Before building ANY component, check whether
